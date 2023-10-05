@@ -5,6 +5,7 @@ import 'package:project/homePage.dart';
 // ignore: depend_on_referenced_packages, library_prefixes
 import 'package:http/http.dart' as myHttp;
 import 'package:project/models/login-response.dart';
+import 'package:project/tabbar/master.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
@@ -39,9 +40,7 @@ class _LoginPageState extends State<LoginPage> {
     String nameStr = await name;
     if (tokenStr != "" && nameStr != "") {
       Future.delayed(Duration(seconds: 1), () async {
-        Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => HomePage()))
-            .then((value) {
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) => MasterTabbar())).then((value) {
           setState(() {});
         });
       });
@@ -51,15 +50,11 @@ class _LoginPageState extends State<LoginPage> {
   Future login(email, password) async {
     LoginResponseModel? loginResponseModel;
     Map<String, String> body = {"email": email, "password": password};
-    var response = await myHttp.post(
-        Uri.parse('https://cek-wa.com/presensi/public/api/login'),
-        body: body);
+    var response = await myHttp.post(Uri.parse('https://cek-wa.com/presensi/public/api/login'), body: body);
     if (response.statusCode == 401) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Email atau password salah")));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Email atau password salah")));
     } else {
-      loginResponseModel =
-          LoginResponseModel.fromJson(json.decode(response.body));
+      loginResponseModel = LoginResponseModel.fromJson(json.decode(response.body));
       print('HASIL ' + response.body);
       saveUser(loginResponseModel.data.token, loginResponseModel.data.name);
     }
@@ -71,15 +66,12 @@ class _LoginPageState extends State<LoginPage> {
       final SharedPreferences pref = await _prefs;
       pref.setString("name", name);
       pref.setString("token", token);
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => HomePage()))
-          .then((value) {
+      Navigator.of(context).push(MaterialPageRoute(builder: (context) => MasterTabbar())).then((value) {
         setState(() {});
       });
     } catch (err) {
       print('ERROR :' + err.toString());
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(err.toString())));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err.toString())));
     }
   }
 

@@ -6,6 +6,7 @@ import 'simpanPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as myHttp;
 
+
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -22,7 +23,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _token = _prefs.then((SharedPreferences prefs) {
       return prefs.getString("token") ?? "";
@@ -34,12 +34,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future getData() async {
-    final Map<String, String> headres = {
-      'Authorization': 'Bearer ' + await _token
-    };
-    var response = await myHttp.get(
-        Uri.parse('https://cek-wa.com/presensi/public/api/get-presensi'),
-        headers: headres);
+    final Map<String, String> headres = {'Authorization': 'Bearer ' + await _token};
+    var response = await myHttp.get(Uri.parse('https://cek-wa.com/presensi/public/api/get-presensi'), headers: headres);
     homeResponseModel = HomeResponseModel.fromJson(json.decode(response.body));
     riwayat.clear();
     homeResponseModel!.data.forEach((element) {
@@ -58,7 +54,7 @@ class _HomePageState extends State<HomePage> {
           future: getData(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             } else {
               print("nomor satu");
               return SafeArea(
@@ -69,22 +65,19 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     FutureBuilder(
                         future: _name,
-                        builder: (BuildContext context,
-                            AsyncSnapshot<String> snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return CircularProgressIndicator();
+                        builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return const CircularProgressIndicator();
                           } else {
                             if (snapshot.hasData) {
                               print(snapshot.data);
-                              return Text(snapshot.data!,
-                                  style: TextStyle(fontSize: 18));
+                              return Text(snapshot.data!, style: const TextStyle(fontSize: 18));
                             } else {
-                              return Text("-", style: TextStyle(fontSize: 18));
+                              return const Text("-", style: TextStyle(fontSize: 18));
                             }
                           }
                         }),
-                    SizedBox(
+                    const SizedBox(
                       height: 20,
                     ),
                     Container(
@@ -93,10 +86,8 @@ class _HomePageState extends State<HomePage> {
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Column(children: [
-                          Text(hariIni?.tanggal ?? '-',
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 16)),
-                          SizedBox(
+                          Text(hariIni?.tanggal ?? '-', style: const TextStyle(color: Colors.white, fontSize: 16)),
+                          const SizedBox(
                             height: 30,
                           ),
                           Row(
@@ -104,22 +95,14 @@ class _HomePageState extends State<HomePage> {
                             children: [
                               Column(
                                 children: [
-                                  Text(hariIni?.masuk ?? '-',
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 24)),
-                                  Text("Masuk",
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 16))
+                                  Text(hariIni?.masuk ?? '-', style: const TextStyle(color: Colors.white, fontSize: 24)),
+                                  Text("Masuk", style: const TextStyle(color: Colors.white, fontSize: 16))
                                 ],
                               ),
                               Column(
                                 children: [
-                                  Text(hariIni?.pulang ?? '-',
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 24)),
-                                  Text("Pulang",
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 16))
+                                  Text(hariIni?.pulang ?? '-', style: const TextStyle(color: Colors.white, fontSize: 24)),
+                                  Text("Pulang", style: const TextStyle(color: Colors.white, fontSize: 16))
                                 ],
                               )
                             ],
@@ -127,8 +110,8 @@ class _HomePageState extends State<HomePage> {
                         ]),
                       ),
                     ),
-                    SizedBox(height: 20),
-                    Text("Riwayat Presensi"),
+                    const SizedBox(height: 20),
+                    const Text("Riwayat Presensi"),
                     Expanded(
                       child: ListView.builder(
                         itemCount: riwayat.length,
@@ -137,19 +120,11 @@ class _HomePageState extends State<HomePage> {
                             leading: Text(riwayat[index].tanggal),
                             title: Row(children: [
                               Column(
-                                children: [
-                                  Text(riwayat[index].masuk,
-                                      style: TextStyle(fontSize: 18)),
-                                  Text("Masuk", style: TextStyle(fontSize: 14))
-                                ],
+                                children: [Text(riwayat[index].masuk, style: const TextStyle(fontSize: 18)), const Text("Masuk", style: const TextStyle(fontSize: 14))],
                               ),
-                              SizedBox(width: 20),
+                              const SizedBox(width: 20),
                               Column(
-                                children: [
-                                  Text(riwayat[index].pulang,
-                                      style: TextStyle(fontSize: 18)),
-                                  Text("Pulang", style: TextStyle(fontSize: 14))
-                                ],
+                                children: [Text(riwayat[index].pulang, style: const TextStyle(fontSize: 18)), const Text("Pulang", style: const TextStyle(fontSize: 14))],
                               ),
                             ]),
                           ),
@@ -161,16 +136,6 @@ class _HomePageState extends State<HomePage> {
               ));
             }
           }),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context)
-              .push(MaterialPageRoute(builder: (context) => SimpanPage()))
-              .then((value) {
-            setState(() {});
-          });
-        },
-        child: Icon(Icons.add),
-      ),
     );
   }
 }

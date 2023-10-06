@@ -1,20 +1,20 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:project/homePage.dart';
+import 'package:project/homePage_byema.dart';
 // ignore: depend_on_referenced_packages, library_prefixes
 import 'package:http/http.dart' as myHttp;
 import 'package:project/models/login-response.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+class LoginPage1 extends StatefulWidget {
+  const LoginPage1({Key? key}) : super(key: key);
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<LoginPage1> createState() => _LoginPage1State();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPage1State extends State<LoginPage1> {
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
@@ -40,7 +40,7 @@ class _LoginPageState extends State<LoginPage> {
     if (tokenStr != "" && nameStr != "") {
       Future.delayed(Duration(seconds: 1), () async {
         Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => HomePage()))
+            .push(MaterialPageRoute(builder: (context) => HomePage1()))
             .then((value) {
           setState(() {});
         });
@@ -72,7 +72,7 @@ class _LoginPageState extends State<LoginPage> {
       pref.setString("name", name);
       pref.setString("token", token);
       Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => HomePage()))
+          .push(MaterialPageRoute(builder: (context) => HomePage1()))
           .then((value) {
         setState(() {});
       });

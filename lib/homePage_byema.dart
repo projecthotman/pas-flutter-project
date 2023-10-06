@@ -1,29 +1,43 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:location/location.dart';
 import 'package:project/models/home-response.dart';
 import 'simpanPage_byema.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as myHttp;
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class HomePage1 extends StatefulWidget {
+  const HomePage1({Key? key}) : super(key: key);
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<HomePage1> createState() => _HomePage1State();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePage1State extends State<HomePage1> {
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   late Future<String> _name, _token;
   HomeResponseModel? homeResponseModel;
   Datum? hariIni;
   List<Datum> riwayat = [];
+  Location location = Location();
+  LocationData? _currentLocation;
+
+  Future<void> _getLocation() async {
+    try {
+      _currentLocation = await location.getLocation();
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    _getLocation();
     _token = _prefs.then((SharedPreferences prefs) {
       return prefs.getString("token") ?? "";
     });
@@ -163,11 +177,25 @@ class _HomePageState extends State<HomePage> {
           }),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.of(context)
+           _getLocation();
+    if (_currentLocation != null) {
+      Navigator.of(context)
               .push(MaterialPageRoute(builder: (context) => SimpanPage1()))
               .then((value) {
             setState(() {});
           });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Tidak dapat mendapatkan lokasi.'),
+        ),
+      );
+    }
+          // Navigator.of(context)
+          //     .push(MaterialPageRoute(builder: (context) => SimpanPage1()))
+          //     .then((value) {
+          //   setState(() {});
+          // });
         },
         child: Icon(Icons.add),
       ),

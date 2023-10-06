@@ -64,7 +64,7 @@ class _SimpanPageState extends State<SimpanPage> {
     Map<String, String> headers = {'Authorization': 'Bearer ' + await _token};
 
     var response = await myHttp.post(
-        Uri.parse("http://localhost:8000/api/save-presensi"),
+        Uri.parse("https://cek-wa.com/presensi/public/api/save-presensi"),
         body: body,
         headers: headers);
 

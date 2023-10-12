@@ -129,11 +129,20 @@ class _SimpanPageState extends State<SimpanPage> {
                     height: 20,
                   ),
                   ElevatedButton(
-                      onPressed: () {
-                        savePresensi(currentLocation.latitude,
-                            currentLocation.longitude);
-                      },
-                      child: Text("Simpan Presensi"))
+  onPressed: () async {
+    final currentLocation = await _currenctLocation();
+    if (currentLocation != null) {
+      // Mengirim data lokasi ke HomePage
+      Navigator.pop(context, currentLocation);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Gagal mendapatkan lokasi')),
+      );
+    }
+  },
+  child: Text("Simpan Presensi"),
+)
+
                 ],
               ));
             } else {

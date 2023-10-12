@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -101,31 +100,33 @@ class _SimpanPage1State extends State<SimpanPage1> {
                 children: [
                   Expanded(
                     child: Container(
-                      height: 400,
-                      child: SfMaps(
-                        layers: [
-                          MapTileLayer(
-                            initialFocalLatLng: MapLatLng(
+                        height: 400,
+                        child: SfMaps(
+                          layers: <MapLayer>[
+                            MapTileLayer(
+                              initialFocalLatLng: MapLatLng(
                                 currentLocation.latitude!,
-                                currentLocation.longitude!),
-                            initialZoomLevel: 15,
-                            initialMarkersCount: 1,
-                            urlTemplate:
-                                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-                            markerBuilder: (BuildContext context, int index) {
-                              return MapMarker(
-                                latitude: currentLocation.latitude!,
-                                longitude: currentLocation.longitude!,
-                                child: const Icon(
-                                  Icons.location_on,
-                                  color: Colors.red,
-                                ),
-                              );
-                            },
-                          )
-                        ],
-                      ),
-                    ),
+                                currentLocation.longitude!,
+                              ),
+                              initialZoomLevel: 15,
+                              urlTemplate:
+                                  "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                            ),
+                            // MapCircleLayer(
+                            //   circles: Set.from([
+                            //     MapCircle(
+                            //       center: MapLatLng(
+                            //         currentLocation.latitude!,
+                            //         currentLocation.longitude!,
+                            //       ),
+                            //       radius: 1000, // Radius dalam meter
+                            //       color: Colors.blue.withOpacity(0.3),
+                            //       strokeWidth: 2,
+                            //     ),
+                            //   ]),
+                            // ),
+                          ],
+                        )),
                   ),
                   Container(
                     margin: const EdgeInsets.all(16),
@@ -139,7 +140,7 @@ class _SimpanPage1State extends State<SimpanPage1> {
                               borderRadius: BorderRadius.circular(15.0),
                             ),
                             elevation: 2,
-                            child: const Row(
+                            child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
@@ -150,38 +151,60 @@ class _SimpanPage1State extends State<SimpanPage1> {
                                 ),
                                 SizedBox(width: 9),
                                 Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(
-                                      "Lokasi Saat Ini:",
-                                      style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold),
+                                  children: [
+                                    FutureBuilder<LocationData?>(
+                                      future: _currenctLocation(),
+                                      builder: (BuildContext context,
+                                          AsyncSnapshot<LocationData?>
+                                              snapshot) {
+                                        if (snapshot.hasData) {
+                                          final LocationData? currentLocation =
+                                              snapshot.data;
+                                          if (currentLocation!.latitude ==
+                                                  -7.01996 &&
+                                              currentLocation.longitude ==
+                                                  110.3083233) {
+                                            return Text(
+                                              "SMK BAGIMU NEGERIKU",
+                                              style: TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            );
+                                          } else {
+                                            return Text(
+                                              "Lokasi Saat Ini:",
+                                              style: TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            );
+                                          }
+                                        } else {
+                                          return const Center(
+                                            child: CircularProgressIndicator(),
+                                          );
+                                        }
+                                      },
                                     ),
-                                    SizedBox(height: 10),
-                                    Text(
-                                      "Latitude: ${currentLocation.latitude}",
-                                      style: TextStyle(fontSize: 16),
-                                    ),
-                                    Text(
-                                      "Longitude: ${currentLocation.longitude}",
-                                      style: TextStyle(fontSize: 16),
-                                    ),
+                                    // ...
                                   ],
-                                ),
+                                )
                               ],
                             ),
                           ),
                           const SizedBox(height: 20),
                           ElevatedButton(
-                            onPressed: () {
-                              savePresensi(currentLocation.latitude,
-                                  currentLocation.longitude);
-                            },
+                            onPressed: (currentLocation.latitude == -7.01996 &&
+                                    currentLocation.longitude == 110.3083233)
+                                ? () {
+                                    savePresensi(currentLocation.latitude,
+                                        currentLocation.longitude);
+                                  }
+                                : null,
                             child: const Text("Simpan Presensi"),
                             style: ElevatedButton.styleFrom(
-                              minimumSize: Size(340,
-                                  36), // Ubah ukuran minimum sesuai kebutuhan
+                              minimumSize: Size(340, 36),
                             ),
                           )
                         ],

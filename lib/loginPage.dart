@@ -1,8 +1,6 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:project/homePage.dart';
-// ignore: depend_on_referenced_packages, library_prefixes
 import 'package:http/http.dart' as myHttp;
 import 'package:project/models/login-response.dart';
 import 'package:project/tabbar/master.dart';
@@ -23,7 +21,6 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _token = _prefs.then((SharedPreferences prefs) {
       return prefs.getString("token") ?? "";
@@ -39,8 +36,10 @@ class _LoginPageState extends State<LoginPage> {
     String tokenStr = await token;
     String nameStr = await name;
     if (tokenStr != "" && nameStr != "") {
-      Future.delayed(Duration(seconds: 1), () async {
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) => MasterTabbar())).then((value) {
+      Future.delayed(const Duration(seconds: 1), () async {
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (context) => const MasterTabbar()))
+            .then((value) {
           setState(() {});
         });
       });
@@ -54,62 +53,101 @@ class _LoginPageState extends State<LoginPage> {
         Uri.parse('https://cek-wa.com/presensi/public/api/login'),
         body: body);
     if (response.statusCode == 401) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Email atau password salah")));
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Email atau password salah")));
     } else {
-      loginResponseModel = LoginResponseModel.fromJson(json.decode(response.body));
-      print('HASIL ' + response.body);
+      loginResponseModel =
+          LoginResponseModel.fromJson(json.decode(response.body));
       saveUser(loginResponseModel.data.token, loginResponseModel.data.name);
     }
   }
 
   Future saveUser(token, name) async {
     try {
-      print("LEWAT SINI " + token + " | " + name);
       final SharedPreferences pref = await _prefs;
       pref.setString("name", name);
       pref.setString("token", token);
-      Navigator.of(context).push(MaterialPageRoute(builder: (context) => MasterTabbar())).then((value) {
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => const MasterTabbar()))
+          .then((value) {
         setState(() {});
       });
     } catch (err) {
-      print('ERROR :' + err.toString());
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err.toString())));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(err.toString())));
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Scaffold(
-      body: SafeArea(
+      body: SingleChildScrollView(
+        child: Container(
           child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Center(child: Text("LOGIN")),
-              SizedBox(height: 20),
-              Text("Email"),
-              TextField(
-                controller: emailController,
-              ),
-              SizedBox(height: 20),
-              Text("Password"),
-              TextField(
-                controller: passwordController,
-                obscureText: true,
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                  onPressed: () {
-                    login(emailController.text, passwordController.text);
-                  },
-                  child: Text("Masuk"))
-            ],
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Image.asset(
+                  "assets/enter.png",
+                  // height: size.height * 0.2,
+                ),
+                Text(
+                  "Welcome Back,",
+                  style: Theme.of(context).textTheme.headlineMedium,
+                ),
+                Text(
+                  "Siap merekap kehadiran Anda.",
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+                const SizedBox(height: 20),
+                Form(
+                    child: Column(
+                  children: [
+                    TextField(
+                      controller: emailController,
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(Icons.person_4_outlined),
+                        labelText: "Email",
+                        hintText: ('email'),
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    TextField(
+                      controller: passwordController,
+                      decoration: InputDecoration(
+                          prefixIcon: Icon(Icons.password),
+                          labelText: "Password",
+                          hintText: ('password'),
+                          border: OutlineInputBorder(),
+                          suffixIcon: IconButton(
+                            icon: Icon(Icons.remove_red_eye_sharp),
+                            onPressed: () {},
+                          )),
+                      obscureText: true,
+                    ),
+                    const SizedBox(height: 20),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          login(emailController.text, passwordController.text);
+                        },
+                        child: Text("Login"),
+                        style: ElevatedButton.styleFrom(
+                              minimumSize: Size(340, 46),
+                            )
+                      ),
+                    ),
+                  ],
+                )),
+              ],
+            ),
           ),
         ),
-      )),
+      ),
     );
   }
 }

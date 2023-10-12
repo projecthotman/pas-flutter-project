@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:io/ansi.dart';
 import 'package:marquee/marquee.dart';
 import 'package:project/models/home-response.dart';
-import 'simpanPage_byema.dart';
+import 'package:project/simpanPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as myHttp;
 
@@ -279,7 +279,7 @@ class _HomePageState extends State<HomePage> {
                                           child: Padding(
                                             padding: const EdgeInsets.all(8.0),
                                             child: Text(
-                                              hariIni?.masuk ?? '-',
+                                              hariIni?.pulang ?? '-',
                                               style: const TextStyle(
                                                 color: Colors.white,
                                                 fontSize: 16,
@@ -400,7 +400,7 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context)
-              .push(MaterialPageRoute(builder: (context) => SimpanPage1()))
+              .push(MaterialPageRoute(builder: (context) => SimpanPage()))
 
               .then((value) {
             setState(() {});

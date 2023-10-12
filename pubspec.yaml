@@ -60,9 +60,7 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-  assets:
-    - assets/welcome.png
-    - assets/enter.png
+    
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
@@ -74,6 +72,8 @@ flutter:
     - img/profile.png
     - img/tambah.png
     - assets/images/
+    - assets/welcome.png
+    - assets/enter.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

@@ -9,6 +9,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_maps/maps.dart';
 import 'package:http/http.dart' as myHttp;
 
+import 'tabbar/master.dart';
+
 class SimpanPage extends StatefulWidget {
   const SimpanPage({Key? key}) : super(key: key);
 
@@ -25,7 +27,7 @@ class _SimpanPageState extends State<SimpanPage> {
     super.initState();
     _token = _prefs.then((SharedPreferences prefs) {
       return prefs.getString("token") ?? "";
-    });
+    }); 
   }
 
   Future<LocationData?> _currenctLocation() async {
@@ -56,28 +58,22 @@ class _SimpanPageState extends State<SimpanPage> {
 
   Future savePresensi(latitude, longitude) async {
     SavePresensiResponseModel savePresensiResponseModel;
-    Map<String, String> body = {
-      "latitude": latitude.toString(),
-      "longitude": longitude.toString()
-    };
+    Map<String, String> body = {"latitude": latitude.toString(), "longitude": longitude.toString()};
 
     Map<String, String> headers = {'Authorization': 'Bearer ' + await _token};
 
-    var response = await myHttp.post(
-        Uri.parse("https://cek-wa.com/presensi/public/api/save-presensi"),
-        body: body,
-        headers: headers);
+    var response = await myHttp.post(Uri.parse("https://cek-wa.com/presensi/public/api/save-presensi"), body: body, headers: headers);
 
-    savePresensiResponseModel =
-        SavePresensiResponseModel.fromJson(json.decode(response.body));
+    savePresensiResponseModel = SavePresensiResponseModel.fromJson(json.decode(response.body));
 
     if (savePresensiResponseModel.success) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Sukses simpan Presensi')));
-      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Sukses simpan Presensi')));
+       Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => MasterTabbar()), // Ganti HalamanBaru dengan kelas halaman yang ingin Anda buka
+      );
     } else {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Gagal simpan Presensi')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Gagal simpan Presensi')));
     }
   }
 
@@ -92,10 +88,7 @@ class _SimpanPageState extends State<SimpanPage> {
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
             if (snapshot.hasData) {
               final LocationData currentLocation = snapshot.data;
-              print("KODING : " +
-                  currentLocation.latitude.toString() +
-                  " | " +
-                  currentLocation.longitude.toString());
+              print("KODING : " + currentLocation.latitude.toString() + " | " + currentLocation.longitude.toString());
               return SafeArea(
                   child: Column(
                 children: [
@@ -104,13 +97,10 @@ class _SimpanPageState extends State<SimpanPage> {
                     child: SfMaps(
                       layers: [
                         MapTileLayer(
-                          initialFocalLatLng: MapLatLng(
-                              currentLocation.latitude!,
-                              currentLocation.longitude!),
+                          initialFocalLatLng: MapLatLng(currentLocation.latitude!, currentLocation.longitude!),
                           initialZoomLevel: 15,
                           initialMarkersCount: 1,
-                          urlTemplate:
-                              "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                          urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                           markerBuilder: (BuildContext context, int index) {
                             return MapMarker(
                               latitude: currentLocation.latitude!,
@@ -143,6 +133,7 @@ class _SimpanPageState extends State<SimpanPage> {
   child: Text("Simpan Presensi"),
 )
 
+ main
                 ],
               ));
             } else {

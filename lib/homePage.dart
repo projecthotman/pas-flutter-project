@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:io/ansi.dart';
 import 'package:marquee/marquee.dart';
 import 'package:project/models/home-response.dart';
-import 'simpanPage.dart';
+import 'simpanPage_byema.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as myHttp;
 
@@ -400,7 +400,8 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context)
-              .push(MaterialPageRoute(builder: (context) => const SimpanPage()))
+              .push(MaterialPageRoute(builder: (context) => SimpanPage1()))
+
               .then((value) {
             setState(() {});
           });

@@ -2,11 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:io/ansi.dart';
+import 'package:marquee/marquee.dart';
 import 'package:project/models/home-response.dart';
 import 'simpanPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as myHttp;
-
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -198,33 +198,32 @@ class _HomePageState extends State<HomePage> {
                                             bottomLeft: Radius.circular(8.0),
                                           ),
                                         ),
-                                        child: const Padding(
+                                        child: Padding(
                                           padding:
-                                              EdgeInsets.only(left: 12),
+                                              const EdgeInsets.only(left: 12),
                                           child: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
                                               // Menggunakan SingleChildScrollView untuk teks yang panjang
-                                              SizedBox(
-                                                height:
-                                                    15, // Atur ketinggian sesuai dengan kebutuhan Anda
-                                                child: SingleChildScrollView(
-                                                  scrollDirection: Axis
-                                                      .horizontal, // Gulung teks secara horizontal
-                                                  child: Text(
-                                                    "SELAMAT PAGI HOTMAN PRIMUS, SEMANGAT KERJANYA",
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 12,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              Row(
+                                              Container(
+                                                  width: double.infinity,
+                                                  height:
+                                                      15, // Atur ketinggian sesuai dengan kebutuhan Anda
+                                                  child: Marquee(
+                                                    text:
+                                                        "SELAMAT PAGI HOTMAN, SEMANGAT KERJANYA | ",
+                                                    startAfter: const Duration(
+                                                        seconds: 3),
+                                                    velocity: 25,
+                                                    style: const TextStyle(
+                                                        color: Colors.white),
+                                                  )),
+                                              const Row(
                                                 children: [
                                                   Padding(
-                                                    padding: EdgeInsets.only(right: 5),
+                                                    padding: EdgeInsets.only(
+                                                        right: 5),
                                                     child: Card(
                                                       color: Colors.green,
                                                       child: Icon(
@@ -305,8 +304,7 @@ class _HomePageState extends State<HomePage> {
                                           ),
                                         ),
                                         child: const Padding(
-                                          padding:
-                                              EdgeInsets.only(left: 12),
+                                          padding: EdgeInsets.only(left: 12),
                                           child: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
@@ -330,7 +328,8 @@ class _HomePageState extends State<HomePage> {
                                               Row(
                                                 children: [
                                                   Padding(
-                                                    padding: EdgeInsets.only(right: 5),
+                                                    padding: EdgeInsets.only(
+                                                        right: 5),
                                                     child: Card(
                                                       color: Colors.green,
                                                       child: Icon(
@@ -372,7 +371,6 @@ class _HomePageState extends State<HomePage> {
                             leading: Text(riwayat[index].tanggal),
                             title: Row(children: [
                               Column(
-
                                 children: [
                                   Text(riwayat[index].masuk,
                                       style: const TextStyle(fontSize: 18)),
@@ -399,7 +397,6 @@ class _HomePageState extends State<HomePage> {
               ));
             }
           }),
-
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context)

@@ -132,8 +132,6 @@ class _SimpanPageState extends State<SimpanPage> {
   },
   child: Text("Simpan Presensi"),
 )
-
- main
                 ],
               ));
             } else {

@@ -41,7 +41,6 @@ dependencies:
   shared_preferences: ^2.2.1
   io: ^1.0.4
   curved_navigation_bar: ^1.0.3
- main
 
 dev_dependencies:
   flutter_test:
@@ -70,6 +69,7 @@ flutter:
     - img/home.png
     - img/profile.png
     - img/tambah.png
+    - assets/images/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
@@ -96,6 +96,3 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
-
-  assets:
-    - assets/images/

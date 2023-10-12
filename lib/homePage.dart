@@ -6,7 +6,6 @@ import 'package:project/models/home-response.dart';
 import 'simpanPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as myHttp;
-import 'package:marquee/marquee.dart';
 
 
 class HomePage extends StatefulWidget {
@@ -42,7 +41,6 @@ class _HomePageState extends State<HomePage> {
     var response = await myHttp.get(
         Uri.parse('https://cek-wa.com/presensi/public/api/get-presensi'),
         headers: headres);
- main
     homeResponseModel = HomeResponseModel.fromJson(json.decode(response.body));
     riwayat.clear();
     homeResponseModel!.data.forEach((element) {
@@ -124,7 +122,6 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                     ),
- main
                     const SizedBox(
                       height: 20,
                     ),
@@ -252,7 +249,6 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                     ),
                                   ),
- main
                                 ],
                               ),
                             ),
@@ -359,7 +355,6 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                     ),
                                   ),
- main
                                 ],
                               ),
                             ),
@@ -393,7 +388,6 @@ class _HomePageState extends State<HomePage> {
                                   const Text("Pulang",
                                       style: TextStyle(fontSize: 14))
                                 ],
- main
                               ),
                             ]),
                           ),
@@ -416,7 +410,6 @@ class _HomePageState extends State<HomePage> {
         },
         child: const Icon(Icons.add),
       ),
- main
     );
   }
 }

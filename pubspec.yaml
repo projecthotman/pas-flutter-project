@@ -40,6 +40,7 @@ dependencies:
   http: ^1.1.0
   shared_preferences: ^2.2.1
   io: ^1.0.4
+
   curved_navigation_bar: ^1.0.3
 
 dev_dependencies:
@@ -58,7 +59,9 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-
+  assets:
+    - assets/welcome.png
+    - assets/enter.png
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.

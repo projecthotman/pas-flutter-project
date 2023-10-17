@@ -53,22 +53,23 @@ class Data {
   String latitude;
   String longitude;
   DateTime tanggal;
-  String masuk;
-  dynamic pulang;
+  String masuk; // Tetap gunakan String
+  String pulang; // Tetap gunakan String
   DateTime createdAt;
   DateTime updatedAt;
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
-        id: json["id"],
-        userId: json["user_id"],
-        latitude: json["latitude"],
-        longitude: json["longitude"],
-        tanggal: DateTime.parse(json["tanggal"]),
-        masuk: json["masuk"],
-        pulang: json["pulang"],
-        createdAt: DateTime.parse(json["created_at"]),
-        updatedAt: DateTime.parse(json["updated_at"]),
-      );
+  id: json["id"],
+  userId: json["user_id"].toString(), // Konversi ke String
+  latitude: json["latitude"].toString(), // Konversi ke String
+  longitude: json["longitude"].toString(), // Konversi ke String
+  tanggal: DateTime.parse(json["tanggal"]),
+  masuk: json["masuk"].toString(), // Konversi ke String
+  pulang: json["pulang"].toString(), // Konversi ke String
+  createdAt: DateTime.parse(json["created_at"]),
+  updatedAt: DateTime.parse(json["updated_at"]),
+);
+
 
   Map<String, dynamic> toJson() => {
         "id": id,

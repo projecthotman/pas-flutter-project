@@ -7,6 +7,7 @@ import 'package:project/models/home-response.dart';
 import 'package:project/simpanPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as myHttp;
+import 'package:percent_indicator/percent_indicator.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -35,12 +36,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future getData() async {
-    final Map<String, String> headres = {
+    final Map<String, String> headers = {
       'Authorization': 'Bearer ${await _token}'
     };
     var response = await myHttp.get(
-        Uri.parse('https://cek-wa.com/presensi/public/api/get-presensi'),
-        headers: headres);
+        Uri.parse('http://10.0.2.2:8000/api/get-presensi'),
+        headers: headers);
     homeResponseModel = HomeResponseModel.fromJson(json.decode(response.body));
     riwayat.clear();
     homeResponseModel!.data.forEach((element) {
@@ -50,35 +51,57 @@ class _HomePageState extends State<HomePage> {
         riwayat.add(element);
       }
     });
+
+    // Panggil setState untuk memperbarui tampilan
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
+    String _getGreeting() {
+      final hour = DateTime.now().hour;
+      String greeting = '';
+
+      if (hour < 12) {
+        greeting = 'Pagi';
+      } else if (hour < 17) {
+        greeting = 'Siang';
+      } else if (hour < 20) {
+        greeting = 'Sore';
+      } else {
+        greeting = 'Malam';
+      }
+
+      return greeting;
+    }
+
+    Widget buildNameFutureBuilder(Future<String> future) {
+      return FutureBuilder(
+        future: future,
+        builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
+          } else {
+            if (snapshot.hasData) {
+              return Text(
+                snapshot.data!,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              );
+            } else {
+              return const Text(
+                "-",
+                style: TextStyle(fontSize: 18),
+              );
+            }
+          }
+        },
+      );
+    }
+
     return Scaffold(
-      appBar: AppBar(
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(
-              20.0), // Menambah jarak vertikal di bagian bawah
-          child: Container(),
-        ),
-        elevation: 0,
-        backgroundColor: Colors.white,
-        leading: IconButton(
-          icon: const Icon(Icons.menu),
-          color: Colors.grey, // Icon untuk tombol menu sidebar
-          onPressed: () {
-            // Tambahkan fungsi untuk menampilkan menu sidebar di sini
-            // Misalnya, jika Anda menggunakan Drawer, Anda dapat memanggil Scaffold.of(context).openDrawer();
-          },
-        ),
-        actions: const [
-          // Widget avatar profil di sebelah kanan
-          CircleAvatar(
-            backgroundImage: AssetImage(
-                'assets/images/profile.jpg'), // Ganti dengan gambar profil Anda
-          ),
-        ],
-      ),
       body: FutureBuilder(
           future: getData(),
           builder: (context, snapshot) {
@@ -89,35 +112,97 @@ class _HomePageState extends State<HomePage> {
                   child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // ignore: sized_box_for_whitespace
+                    const SizedBox(
+                      height: 16,
+                    ),
                     Container(
-                      width: 500,
-                      child: Card(
-                        margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Center(
-                            child: FutureBuilder(
-                              future: _name,
-                              builder: (BuildContext context,
-                                  AsyncSnapshot<String> snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return const CircularProgressIndicator();
-                                } else {
-                                  if (snapshot.hasData) {
-                                    // print(snapshot.data);
-                                    return Text(snapshot.data!,
-                                        style: const TextStyle(fontSize: 18));
-                                  } else {
-                                    return const Text("-",
-                                        style: TextStyle(fontSize: 18));
-                                  }
-                                }
-                              },
+                      child: Row(
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment
+                                .start, // Agar teks sejajar kiri
+                            children: <Widget>[
+                              Row(
+                                children: [
+                                  Text(
+                                    "Selamat ${_getGreeting()} !",
+                                    style: const TextStyle(
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  const Icon(
+                                    Icons.waving_hand,
+                                    color: Colors.amber,
+                                    size: 18,
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 10),
+                              buildNameFutureBuilder(_name),
+                            ],
+                          ),
+                          const Spacer(),
+                          const Card(
+                            child: Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Icon(
+                                Icons.notifications,
+                                color: Colors
+                                    .black, // Ubah warna ikon notifikasi sesuai preferensi Anda
+                              ),
                             ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 40,
+                    ),
+                    Container(
+                      child: Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: Row(
+                            children: [
+                              CircularPercentIndicator(
+                                radius: 30,
+                                lineWidth: 8,
+                                percent: 0.4,
+                                progressColor: Colors.blue,
+                                backgroundColor: Colors.blue.shade100,
+                                circularStrokeCap: CircularStrokeCap.round,
+                                center: const Text('40%', style: TextStyle(fontSize: 16)),
+                              ),
+                              const SizedBox(width: 16),
+                              const Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Kehadiranmu sebulan ini",
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.keyboard_arrow_up,
+                                        size: 18,
+                                      ),
+                                      SizedBox(width: 4),
+                                      Text(
+                                        "meningkat 5% dari bulan lalu",
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                         ),
                       ),
@@ -400,8 +485,7 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context)
-              .push(MaterialPageRoute(builder: (context) => SimpanPage()))
-
+              .push(MaterialPageRoute(builder: (context) => const SimpanPage()))
               .then((value) {
             setState(() {});
           });

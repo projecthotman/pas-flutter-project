@@ -59,17 +59,14 @@ class _SimpanPageState extends State<SimpanPage> {
       "latitude": latitude.toString(),
       "longitude": longitude.toString()
     };
-
     Map<String, String> headers = {'Authorization': 'Bearer ' + await _token};
 
     var response = await myHttp.post(
-        Uri.parse("https://cek-wa.com/presensi/public/api/save-presensi"),
+        Uri.parse("http://10.0.2.2:8000/api/save-presensi"),
         body: body,
         headers: headers);
-
     savePresensiResponseModel =
         SavePresensiResponseModel.fromJson(json.decode(response.body));
-
     if (savePresensiResponseModel.success) {
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Sukses simpan Presensi')));
@@ -195,7 +192,8 @@ class _SimpanPageState extends State<SimpanPage> {
                           ),
                           const SizedBox(height: 20),
                           ElevatedButton(
-                            onPressed: (currentLocation.latitude == -7.01996 &&
+                            onPressed: (currentLocation.latitude ==
+                                        -7.0199633 &&
                                     currentLocation.longitude == 110.3083233)
                                 ? () {
                                     savePresensi(currentLocation.latitude,

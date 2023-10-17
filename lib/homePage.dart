@@ -35,12 +35,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future getData() async {
-    final Map<String, String> headres = {
-      'Authorization': 'Bearer ${await _token}'
-    };
-    var response = await myHttp.get(
-        Uri.parse('https://cek-wa.com/presensi/public/api/get-presensi'),
-        headers: headres);
+    final Map<String, String> headres = {'Authorization': 'Bearer ${await _token}'};
+    var response = await myHttp.get(Uri.parse('https://cek-wa.com/presensi/public/api/get-presensi'), headers: headres);
     homeResponseModel = HomeResponseModel.fromJson(json.decode(response.body));
     riwayat.clear();
     homeResponseModel!.data.forEach((element) {
@@ -57,8 +53,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(
-              20.0), // Menambah jarak vertikal di bagian bawah
+          preferredSize: const Size.fromHeight(20.0), // Menambah jarak vertikal di bagian bawah
           child: Container(),
         ),
         elevation: 0,
@@ -74,8 +69,7 @@ class _HomePageState extends State<HomePage> {
         actions: const [
           // Widget avatar profil di sebelah kanan
           CircleAvatar(
-            backgroundImage: AssetImage(
-                'assets/images/profile.jpg'), // Ganti dengan gambar profil Anda
+            backgroundImage: AssetImage('assets/images/profile.jpg'), // Ganti dengan gambar profil Anda
           ),
         ],
       ),
@@ -101,19 +95,15 @@ class _HomePageState extends State<HomePage> {
                           child: Center(
                             child: FutureBuilder(
                               future: _name,
-                              builder: (BuildContext context,
-                                  AsyncSnapshot<String> snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
+                              builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                                if (snapshot.connectionState == ConnectionState.waiting) {
                                   return const CircularProgressIndicator();
                                 } else {
                                   if (snapshot.hasData) {
                                     // print(snapshot.data);
-                                    return Text(snapshot.data!,
-                                        style: const TextStyle(fontSize: 18));
+                                    return Text(snapshot.data!, style: const TextStyle(fontSize: 18));
                                   } else {
-                                    return const Text("-",
-                                        style: TextStyle(fontSize: 18));
+                                    return const Text("-", style: TextStyle(fontSize: 18));
                                   }
                                 }
                               },
@@ -149,8 +139,7 @@ class _HomePageState extends State<HomePage> {
                             const SizedBox(height: 20),
                             Card(
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                    8.0), // Sudut Card dibulatkan
+                                borderRadius: BorderRadius.circular(8.0), // Sudut Card dibulatkan
                               ),
                               color: Colors.blue[700],
                               child: Row(
@@ -164,8 +153,7 @@ class _HomePageState extends State<HomePage> {
                                           color: Colors.blue[700],
                                           border: const Border(
                                             right: BorderSide(
-                                              color: Colors
-                                                  .white, // Warna border kanan
+                                              color: Colors.white, // Warna border kanan
                                               width: 2.0, // Lebar border kanan
                                             ),
                                           ),
@@ -199,31 +187,24 @@ class _HomePageState extends State<HomePage> {
                                           ),
                                         ),
                                         child: Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 12),
+                                          padding: const EdgeInsets.only(left: 12),
                                           child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               // Menggunakan SingleChildScrollView untuk teks yang panjang
                                               Container(
                                                   width: double.infinity,
-                                                  height:
-                                                      15, // Atur ketinggian sesuai dengan kebutuhan Anda
+                                                  height: 15, // Atur ketinggian sesuai dengan kebutuhan Anda
                                                   child: Marquee(
-                                                    text:
-                                                        "SELAMAT PAGI HOTMAN, SEMANGAT KERJANYA | ",
-                                                    startAfter: const Duration(
-                                                        seconds: 3),
+                                                    text: "SELAMAT PAGI HOTMAN, SEMANGAT KERJANYA | ",
+                                                    startAfter: const Duration(seconds: 3),
                                                     velocity: 25,
-                                                    style: const TextStyle(
-                                                        color: Colors.white),
+                                                    style: const TextStyle(color: Colors.white),
                                                   )),
                                               const Row(
                                                 children: [
                                                   Padding(
-                                                    padding: EdgeInsets.only(
-                                                        right: 5),
+                                                    padding: EdgeInsets.only(right: 5),
                                                     child: Card(
                                                       color: Colors.green,
                                                       child: Icon(
@@ -254,8 +235,7 @@ class _HomePageState extends State<HomePage> {
                             const SizedBox(height: 20),
                             Card(
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                    8.0), // Sudut Card dibulatkan
+                                borderRadius: BorderRadius.circular(8.0), // Sudut Card dibulatkan
                               ),
                               color: Colors.blue[700],
                               child: Row(
@@ -269,8 +249,7 @@ class _HomePageState extends State<HomePage> {
                                           color: Colors.blue[700],
                                           border: const Border(
                                             right: BorderSide(
-                                              color: Colors
-                                                  .white, // Warna border kanan
+                                              color: Colors.white, // Warna border kanan
                                               width: 2.0, // Lebar border kanan
                                             ),
                                           ),
@@ -306,16 +285,13 @@ class _HomePageState extends State<HomePage> {
                                         child: const Padding(
                                           padding: EdgeInsets.only(left: 12),
                                           child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               // Menggunakan SingleChildScrollView untuk teks yang panjang
                                               SizedBox(
-                                                height:
-                                                    15, // Atur ketinggian sesuai dengan kebutuhan Anda
+                                                height: 15, // Atur ketinggian sesuai dengan kebutuhan Anda
                                                 child: SingleChildScrollView(
-                                                  scrollDirection: Axis
-                                                      .horizontal, // Gulung teks secara horizontal
+                                                  scrollDirection: Axis.horizontal, // Gulung teks secara horizontal
                                                   child: Text(
                                                     "SELAMAT SORE HOTMAN PRIMUS, SAMPAI JUMPA BESOK`",
                                                     style: TextStyle(
@@ -328,8 +304,7 @@ class _HomePageState extends State<HomePage> {
                                               Row(
                                                 children: [
                                                   Padding(
-                                                    padding: EdgeInsets.only(
-                                                        right: 5),
+                                                    padding: EdgeInsets.only(right: 5),
                                                     child: Card(
                                                       color: Colors.green,
                                                       child: Icon(
@@ -371,21 +346,11 @@ class _HomePageState extends State<HomePage> {
                             leading: Text(riwayat[index].tanggal),
                             title: Row(children: [
                               Column(
-                                children: [
-                                  Text(riwayat[index].masuk,
-                                      style: const TextStyle(fontSize: 18)),
-                                  const Text("Masuk",
-                                      style: TextStyle(fontSize: 14))
-                                ],
+                                children: [Text(riwayat[index].masuk, style: const TextStyle(fontSize: 18)), const Text("Masuk", style: TextStyle(fontSize: 14))],
                               ),
                               const SizedBox(width: 20),
                               Column(
-                                children: [
-                                  Text(riwayat[index].pulang,
-                                      style: const TextStyle(fontSize: 18)),
-                                  const Text("Pulang",
-                                      style: TextStyle(fontSize: 14))
-                                ],
+                                children: [Text(riwayat[index].pulang, style: const TextStyle(fontSize: 18)), const Text("Pulang", style: TextStyle(fontSize: 14))],
                               ),
                             ]),
                           ),
@@ -397,17 +362,6 @@ class _HomePageState extends State<HomePage> {
               ));
             }
           }),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context)
-              .push(MaterialPageRoute(builder: (context) => SimpanPage()))
-
-              .then((value) {
-            setState(() {});
-          });
-        },
-        child: const Icon(Icons.add),
-      ),
     );
   }
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'profile.dart' as profile;
-
 import 'package:project/simpanPage.dart' as simpanpage;
 import 'package:project/homePage.dart' as homepage;
 
@@ -21,25 +20,39 @@ class MasterTabbar extends StatefulWidget {
   State<MasterTabbar> createState() => _MasterTabbarState();
 }
 
-class _MasterTabbarState extends State<MasterTabbar> with SingleTickerProviderStateMixin {
-  late TabController controller;
+class _MasterTabbarState extends State<MasterTabbar> {
+  late PageController pageController;
+  int pageIndex = 0;
 
   @override
   void initState() {
-    controller = TabController(length: 3, vsync: this);
+    pageController = PageController(initialPage: pageIndex);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    pageController.dispose();
+    super.dispose();
+  }
+
+  void onPageChanged(int index) {
+    setState(() {
+      pageIndex = index;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: TabBarView(
-        controller: controller,
+      body: PageView(
+        controller: pageController,
         children: <Widget>[
           const homepage.HomePage(),
           const simpanpage.SimpanPage(),
           profile.Profile(),
         ],
+        onPageChanged: onPageChanged,
       ),
       bottomNavigationBar: CurvedNavigationBar(
         height: 50,
@@ -51,8 +64,9 @@ class _MasterTabbarState extends State<MasterTabbar> with SingleTickerProviderSt
           Icon(Icons.account_circle, size: 30, color: Colors.white),
         ],
         onTap: (index) {
-          controller.animateTo(index);
+          pageController.animateToPage(index, duration: const Duration(milliseconds: 300), curve: Curves.ease);
         },
+        index: pageIndex, // Ini akan menjaga ikon yang aktif sesuai dengan halaman yang aktif
       ),
     );
   }

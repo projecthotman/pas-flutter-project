@@ -234,8 +234,7 @@ class _HomePageState extends State<HomePage> {
                             const SizedBox(height: 20),
                             Card(
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                    8.0), // Sudut Card dibulatkan
+                                borderRadius: BorderRadius.circular(8.0), // Sudut Card dibulatkan
                               ),
                               color: Colors.blue[700],
                               child: Row(
@@ -249,8 +248,7 @@ class _HomePageState extends State<HomePage> {
                                           color: Colors.blue[700],
                                           border: const Border(
                                             right: BorderSide(
-                                              color: Colors
-                                                  .white, // Warna border kanan
+                                              color: Colors.white, // Warna border kanan
                                               width: 2.0, // Lebar border kanan
                                             ),
                                           ),
@@ -284,31 +282,24 @@ class _HomePageState extends State<HomePage> {
                                           ),
                                         ),
                                         child: Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 12),
+                                          padding: const EdgeInsets.only(left: 12),
                                           child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               // Menggunakan SingleChildScrollView untuk teks yang panjang
                                               Container(
                                                   width: double.infinity,
-                                                  height:
-                                                      15, // Atur ketinggian sesuai dengan kebutuhan Anda
+                                                  height: 15, // Atur ketinggian sesuai dengan kebutuhan Anda
                                                   child: Marquee(
-                                                    text:
-                                                        "SELAMAT PAGI HOTMAN, SEMANGAT KERJANYA | ",
-                                                    startAfter: const Duration(
-                                                        seconds: 3),
+                                                    text: "SELAMAT PAGI HOTMAN, SEMANGAT KERJANYA | ",
+                                                    startAfter: const Duration(seconds: 3),
                                                     velocity: 25,
-                                                    style: const TextStyle(
-                                                        color: Colors.white),
+                                                    style: const TextStyle(color: Colors.white),
                                                   )),
                                               const Row(
                                                 children: [
                                                   Padding(
-                                                    padding: EdgeInsets.only(
-                                                        right: 5),
+                                                    padding: EdgeInsets.only(right: 5),
                                                     child: Card(
                                                       color: Colors.green,
                                                       child: Icon(
@@ -339,8 +330,7 @@ class _HomePageState extends State<HomePage> {
                             const SizedBox(height: 20),
                             Card(
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                    8.0), // Sudut Card dibulatkan
+                                borderRadius: BorderRadius.circular(8.0), // Sudut Card dibulatkan
                               ),
                               color: Colors.blue[700],
                               child: Row(
@@ -354,8 +344,7 @@ class _HomePageState extends State<HomePage> {
                                           color: Colors.blue[700],
                                           border: const Border(
                                             right: BorderSide(
-                                              color: Colors
-                                                  .white, // Warna border kanan
+                                              color: Colors.white, // Warna border kanan
                                               width: 2.0, // Lebar border kanan
                                             ),
                                           ),
@@ -391,16 +380,13 @@ class _HomePageState extends State<HomePage> {
                                         child: const Padding(
                                           padding: EdgeInsets.only(left: 12),
                                           child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               // Menggunakan SingleChildScrollView untuk teks yang panjang
                                               SizedBox(
-                                                height:
-                                                    15, // Atur ketinggian sesuai dengan kebutuhan Anda
+                                                height: 15, // Atur ketinggian sesuai dengan kebutuhan Anda
                                                 child: SingleChildScrollView(
-                                                  scrollDirection: Axis
-                                                      .horizontal, // Gulung teks secara horizontal
+                                                  scrollDirection: Axis.horizontal, // Gulung teks secara horizontal
                                                   child: Text(
                                                     "SELAMAT SORE HOTMAN PRIMUS, SAMPAI JUMPA BESOK`",
                                                     style: TextStyle(
@@ -413,8 +399,7 @@ class _HomePageState extends State<HomePage> {
                                               Row(
                                                 children: [
                                                   Padding(
-                                                    padding: EdgeInsets.only(
-                                                        right: 5),
+                                                    padding: EdgeInsets.only(right: 5),
                                                     child: Card(
                                                       color: Colors.green,
                                                       child: Icon(
@@ -456,21 +441,11 @@ class _HomePageState extends State<HomePage> {
                             leading: Text(riwayat[index].tanggal),
                             title: Row(children: [
                               Column(
-                                children: [
-                                  Text(riwayat[index].masuk,
-                                      style: const TextStyle(fontSize: 18)),
-                                  const Text("Masuk",
-                                      style: TextStyle(fontSize: 14))
-                                ],
+                                children: [Text(riwayat[index].masuk, style: const TextStyle(fontSize: 18)), const Text("Masuk", style: TextStyle(fontSize: 14))],
                               ),
                               const SizedBox(width: 20),
                               Column(
-                                children: [
-                                  Text(riwayat[index].pulang,
-                                      style: const TextStyle(fontSize: 18)),
-                                  const Text("Pulang",
-                                      style: TextStyle(fontSize: 14))
-                                ],
+                                children: [Text(riwayat[index].pulang, style: const TextStyle(fontSize: 18)), const Text("Pulang", style: TextStyle(fontSize: 14))],
                               ),
                             ]),
                           ),

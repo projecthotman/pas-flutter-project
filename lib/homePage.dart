@@ -1,10 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:io/ansi.dart';
 import 'package:marquee/marquee.dart';
 import 'package:project/models/home-response.dart';
-import 'package:project/simpanPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as myHttp;
 
@@ -132,7 +130,7 @@ class _HomePageState extends State<HomePage> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.0),
                       ),
-                      color: Colors.blue[800],
+                      color: const Color(0xFF688E4E),
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Column(
@@ -152,7 +150,7 @@ class _HomePageState extends State<HomePage> {
                                 borderRadius: BorderRadius.circular(
                                     8.0), // Sudut Card dibulatkan
                               ),
-                              color: Colors.blue[700],
+                              color:const Color(0xFF688E4E),
                               child: Row(
                                 children: [
                                   Expanded(
@@ -160,9 +158,9 @@ class _HomePageState extends State<HomePage> {
                                     child: FractionallySizedBox(
                                       widthFactor: 1,
                                       child: Container(
-                                        decoration: BoxDecoration(
-                                          color: Colors.blue[700],
-                                          border: const Border(
+                                        decoration: const BoxDecoration(
+                                          color: Color(0xFF688E4E),
+                                          border: Border(
                                             right: BorderSide(
                                               color: Colors
                                                   .white, // Warna border kanan
@@ -191,9 +189,9 @@ class _HomePageState extends State<HomePage> {
                                     child: Padding(
                                       padding: const EdgeInsets.all(4.0),
                                       child: Container(
-                                        decoration: BoxDecoration(
-                                          color: Colors.blue[700],
-                                          borderRadius: const BorderRadius.only(
+                                        decoration: const BoxDecoration(
+                                          color: Color(0xFF688E4E),
+                                          borderRadius: BorderRadius.only(
                                             topLeft: Radius.circular(8.0),
                                             bottomLeft: Radius.circular(8.0),
                                           ),
@@ -257,7 +255,7 @@ class _HomePageState extends State<HomePage> {
                                 borderRadius: BorderRadius.circular(
                                     8.0), // Sudut Card dibulatkan
                               ),
-                              color: Colors.blue[700],
+                              color: const Color(0xFF688E4E),
                               child: Row(
                                 children: [
                                   Expanded(
@@ -265,9 +263,9 @@ class _HomePageState extends State<HomePage> {
                                     child: FractionallySizedBox(
                                       widthFactor: 1,
                                       child: Container(
-                                        decoration: BoxDecoration(
-                                          color: Colors.blue[700],
-                                          border: const Border(
+                                        decoration: const BoxDecoration(
+                                          color: Color(0xFF688E4E),
+                                          border: Border(
                                             right: BorderSide(
                                               color: Colors
                                                   .white, // Warna border kanan
@@ -296,9 +294,9 @@ class _HomePageState extends State<HomePage> {
                                     child: Padding(
                                       padding: const EdgeInsets.all(4.0),
                                       child: Container(
-                                        decoration: BoxDecoration(
-                                          color: Colors.blue[700],
-                                          borderRadius: const BorderRadius.only(
+                                        decoration: const BoxDecoration(
+                                          color: Color(0xFF688E4E),
+                                          borderRadius: BorderRadius.only(
                                             topLeft: Radius.circular(8.0),
                                             bottomLeft: Radius.circular(8.0),
                                           ),
@@ -397,17 +395,17 @@ class _HomePageState extends State<HomePage> {
               ));
             }
           }),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context)
-              .push(MaterialPageRoute(builder: (context) => SimpanPage()))
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     Navigator.of(context)
+      //         .push(MaterialPageRoute(builder: (context) => SimpanPage()))
 
-              .then((value) {
-            setState(() {});
-          });
-        },
-        child: const Icon(Icons.add),
-      ),
+      //         .then((value) {
+      //       setState(() {});
+      //     });
+      //   },
+      //   child: const Icon(Icons.add),
+      // ),
     );
   }
 }

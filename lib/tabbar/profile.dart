@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:project/loginPage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({Key? key}) : super(key: key);
 
+  Future<void> logout() async {
+  final SharedPreferences prefs = await _prefs;
+  prefs.remove("token"); 
+  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const LoginPage()));
+}
+
+  
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -19,12 +28,11 @@ class ProfilePage extends StatelessWidget {
               width: 150,
               child: const CircleAvatar(
                 radius: 60,
-                backgroundImage: ExactAssetImage('assets/images/profile.jpg'),
+                backgroundImage: ExactAssetImage('assets/img/profile.png'),
               ),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-              
                   width: 5.0,
                 ),
               ),
@@ -42,15 +50,11 @@ class ProfilePage extends StatelessWidget {
                       fontSize: 20,
                     ),
                   ),
-                  SizedBox(
-                      height: 24,
-                      child: Image.asset("assets/images/verified.png")),
                 ],
               ),
             ),
             const Text(
               'johndoe@gmail.com',
-              
             ),
             const SizedBox(
               height: 30,
@@ -58,25 +62,22 @@ class ProfilePage extends StatelessWidget {
             SizedBox(
               height: size.height * .7,
               width: size.width,
-              child: const Column(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   ListTile(
                     leading: Icon(Icons.person_3),
                     title: Text('My Profile'),
                   ),
-                  ListTile(
-                    leading: Icon(Icons.settings),
-                    title: Text('Settings'),
-                  ),
-                  ListTile(
-                    leading: Icon(Icons.notifications),
-                    title: Text('Notifications'),
-                  ),
-                  ListTile(
-                    leading: Icon(Icons.logout),
-                    title: Text('Log Out'),
-                  ),
+                  InkWell(
+                    onTap: () {
+                      logout();
+                    },
+                    child: ListTile(
+                      leading: Icon(Icons.logout),
+                      title: Text('Log Out'),
+                    ),
+                  )
                 ],
               ),
             ),

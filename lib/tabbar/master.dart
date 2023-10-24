@@ -56,11 +56,11 @@ class _MasterTabbarState extends State<MasterTabbar> {
       ),
       bottomNavigationBar: CurvedNavigationBar(
         height: 50,
-        color: Colors.blue,
+        color: const Color(0xFF688E4E),
         backgroundColor: Colors.white,
         items: const <Widget>[
           Icon(Icons.home, size: 30, color: Colors.white),
-          Icon(Icons.add_location, size: 30, color: Colors.white),
+          Icon(Icons.add, size: 30, color: Colors.white),
           Icon(Icons.account_circle, size: 30, color: Colors.white),
         ],
         onTap: (index) {

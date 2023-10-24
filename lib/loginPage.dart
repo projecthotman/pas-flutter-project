@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:project/homePage.dart';
 import 'package:http/http.dart' as myHttp;
 import 'package:project/models/login-response.dart';
 import 'package:project/tabbar/master.dart';
+import 'package:project/telladmin.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
@@ -79,6 +79,9 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  bool _isPasswordObscured = true;
+  bool _isTextVisible = false;
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -90,60 +93,175 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Image.asset(
-                  "assets/enter.png",
-                  // height: size.height * 0.2,
+                Center(
+                  child: Image.asset(
+                    "assets/enter.png",
+                    height: size.height * 0.31,
+                  ),
                 ),
-                Text(
-                  "Welcome Back,",
-                  style: Theme.of(context).textTheme.headlineMedium,
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                  ),
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.8,
+                    child: const Text(
+                      "Welcome back! Glad to see you, Again!",
+                      style: TextStyle(
+                        fontSize: 30,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF688E4E)
+                      ),
+                    ),
+                  ),
                 ),
-                Text(
-                  "Siap merekap kehadiran Anda.",
-                  style: Theme.of(context).textTheme.headlineSmall,
+                const SizedBox(height: 40),
+                //email
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                  ),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF7F8F9),
+                      border: Border.all(
+                        color: const Color(0xFFE8ECF4),
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        left: 10,
+                        right: 10,
+                      ),
+                      child: TextFormField(
+                        controller: emailController,
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Enter your email',
+                          hintStyle: TextStyle(
+                            color: Color(0xFF8391A1),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 15),
+                //password
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                  ),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF7F8F9),
+                      border: Border.all(
+                        color: const Color(0xFFE8ECF4),
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        left: 10,
+                        right: 10,
+                      ),
+                      child: TextFormField(
+                        controller: passwordController,
+                        obscureText: _isPasswordObscured && !_isTextVisible,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Enter your password',
+                          hintStyle: const TextStyle(
+                            color: Color(0xFF8391A1),
+                          ),
+                          suffixIcon: IconButton(
+                            onPressed: () {
+                              setState(() {
+                                _isPasswordObscured = !_isPasswordObscured;
+                                _isTextVisible = !_isTextVisible;
+                              });
+                            },
+                            icon: Icon(
+                              _isPasswordObscured
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: Color(0xFF8391A1),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 25),
+
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 5,
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: MaterialButton(
+                          color: const Color(0xFF1E232C),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          onPressed: () {
+                            login(
+                                emailController.text, passwordController.text);
+                          },
+                          child: const Padding(
+                            padding: EdgeInsets.all(15.0),
+                            child: Text(
+                              "Login",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 25),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "Forgot password? ",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const TellAdmin()));
+                        },
+                        child: const Text(
+                          "Tell admin",
+                          style: TextStyle(
+                            color: Color(0xFF688E4E),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 20),
-                Form(
-                    child: Column(
-                  children: [
-                    TextField(
-                      controller: emailController,
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.person_4_outlined),
-                        labelText: "Email",
-                        hintText: ('email'),
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    TextField(
-                      controller: passwordController,
-                      decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.password),
-                          labelText: "Password",
-                          hintText: ('password'),
-                          border: OutlineInputBorder(),
-                          suffixIcon: IconButton(
-                            icon: Icon(Icons.remove_red_eye_sharp),
-                            onPressed: () {},
-                          )),
-                      obscureText: true,
-                    ),
-                    const SizedBox(height: 20),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          login(emailController.text, passwordController.text);
-                        },
-                        child: Text("Login"),
-                        style: ElevatedButton.styleFrom(
-                              minimumSize: Size(340, 46),
-                            )
-                      ),
-                    ),
-                  ],
-                )),
               ],
             ),
           ),

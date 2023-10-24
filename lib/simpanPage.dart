@@ -80,9 +80,6 @@ class _SimpanPageState extends State<SimpanPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Presensi"),
-      ),
       body: FutureBuilder<LocationData?>(
           future: _currenctLocation(),
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
@@ -192,17 +189,15 @@ class _SimpanPageState extends State<SimpanPage> {
                           ),
                           const SizedBox(height: 20),
                           ElevatedButton(
-                            onPressed: (currentLocation.latitude ==
-                                        -7.0199633 &&
-                                    currentLocation.longitude == 110.3083233)
-                                ? () {
-                                    savePresensi(currentLocation.latitude,
-                                        currentLocation.longitude);
-                                  }
-                                : null,
+                            onPressed: () {
+                              savePresensi(currentLocation.latitude,
+                                  currentLocation.longitude);
+                            },
                             child: const Text("Simpan Presensi"),
                             style: ElevatedButton.styleFrom(
                               minimumSize: Size(340, 36),
+                              primary: const Color(
+                                  0xFF1E232C), // Atur warna latar belakang tombol
                             ),
                           )
                         ],

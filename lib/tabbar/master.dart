@@ -50,7 +50,7 @@ class _MasterTabbarState extends State<MasterTabbar> {
         children: <Widget>[
           const homepage.HomePage(),
           const simpanpage.SimpanPage(),
-          profile.Profile(),
+          profile.ProfilePage(),
         ],
         onPageChanged: onPageChanged,
       ),

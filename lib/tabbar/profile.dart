@@ -4,14 +4,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({Key? key}) : super(key: key);
+  Future<void> logout(BuildContext context, SharedPreferences prefs) async {
+    prefs.remove("token");
+    Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const LoginPage()));
+  }
 
-  Future<void> logout() async {
-  final SharedPreferences prefs = await _prefs;
-  prefs.remove("token"); 
-  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const LoginPage()));
-}
-
-  
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -70,8 +68,9 @@ class ProfilePage extends StatelessWidget {
                     title: Text('My Profile'),
                   ),
                   InkWell(
-                    onTap: () {
-                      logout();
+                    onTap: () async {
+                      final prefs = await SharedPreferences.getInstance();
+                      await logout(context, prefs);
                     },
                     child: ListTile(
                       leading: Icon(Icons.logout),

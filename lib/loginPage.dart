@@ -50,7 +50,7 @@ class _LoginPageState extends State<LoginPage> {
     LoginResponseModel? loginResponseModel;
     Map<String, String> body = {"email": email, "password": password};
     var response = await myHttp.post(
-        Uri.parse('http://10.0.2.2:8000/api/login'),
+        Uri.parse('https://cek-wa.com/presensi/public/api/login'),
         body: body);
     if (response.statusCode == 401) {
       ScaffoldMessenger.of(context).showSnackBar(

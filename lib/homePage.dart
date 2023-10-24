@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:marquee/marquee.dart';
 import 'package:project/models/home-response.dart';
+import 'package:project/simpanPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as myHttp;
 import 'package:percent_indicator/percent_indicator.dart';
@@ -38,7 +39,7 @@ class _HomePageState extends State<HomePage> {
       'Authorization': 'Bearer ${await _token}'
     };
     var response = await myHttp.get(
-        Uri.parse('http://10.0.2.2:8000/api/get-presensi'),
+        Uri.parse('https://cek-wa.com/presensi/public/api/get-presensi'),
         headers: headers);
     homeResponseModel = HomeResponseModel.fromJson(json.decode(response.body));
     riwayat.clear();

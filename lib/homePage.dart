@@ -493,16 +493,6 @@ class _HomePageState extends State<HomePage> {
               ));
             }
           }),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context)
-              .push(MaterialPageRoute(builder: (context) => const SimpanPage()))
-              .then((value) {
-            setState(() {});
-          });
-        },
-        child: const Icon(Icons.add),
-      ),
     );
   }
 }

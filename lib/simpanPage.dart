@@ -7,6 +7,7 @@ import 'package:project/models/save-presensi-response.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_maps/maps.dart';
 import 'package:http/http.dart' as myHttp;
+import 'tabbar/master.dart';
 
 class SimpanPage extends StatefulWidget {
   const SimpanPage({Key? key}) : super(key: key);
@@ -70,7 +71,7 @@ class _SimpanPageState extends State<SimpanPage> {
     if (savePresensiResponseModel.success) {
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Sukses simpan Presensi')));
-      Navigator.pop(context);
+       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MasterTabbar())); 
     } else {
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text('Gagal simpan Presensi')));

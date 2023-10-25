@@ -50,7 +50,7 @@ class Datum {
   });
 
   int id;
-  int userId;
+  String userId;
   String latitude;
   String longitude;
   String tanggal;

@@ -20,9 +20,11 @@ class _HomePageState extends State<HomePage> {
   HomeResponseModel? homeResponseModel;
   Datum? hariIni;
   List<Datum> riwayat = [];
+  bool isLoading = true;
 
   @override
   void initState() {
+    // TODO: implement initState
     super.initState();
     _token = _prefs.then((SharedPreferences prefs) {
       return prefs.getString("token") ?? "";
@@ -34,12 +36,13 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future getData() async {
-    final Map<String, String> headers = {
-      'Authorization': 'Bearer ${await _token}'
+    final Map<String, String> headres = {
+      'Authorization': 'Bearer ' + await _token
     };
     var response = await myHttp.get(
         Uri.parse('https://cek-wa.com/presensi/public/api/get-presensi'),
-        headers: headers);
+        headers: headres);
+        print("Response dari server: " + response.body);
     homeResponseModel = HomeResponseModel.fromJson(json.decode(response.body));
     riwayat.clear();
     homeResponseModel!.data.forEach((element) {
@@ -49,9 +52,6 @@ class _HomePageState extends State<HomePage> {
         riwayat.add(element);
       }
     });
-
-    // Panggil setState untuk memperbarui tampilan
-    setState(() {});
   }
 
   @override
@@ -97,6 +97,24 @@ class _HomePageState extends State<HomePage> {
           }
         },
       );
+    }
+
+    Widget buildHariIniFutureBuilder(Datum? hariIni) {
+      if (hariIni == null) {
+        return const Text(
+          "-",
+          style: TextStyle(fontSize: 18, color: Colors.white),
+        );
+      } else {
+        return Text(
+          hariIni.tanggal,
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        );
+      }
     }
 
     return Scaffold(
@@ -171,7 +189,8 @@ class _HomePageState extends State<HomePage> {
                                 progressColor: Color(0xFF688E4E),
                                 backgroundColor: Colors.blue.shade100,
                                 circularStrokeCap: CircularStrokeCap.round,
-                                center: const Text('40%', style: TextStyle(fontSize: 16)),
+                                center: const Text('40%',
+                                    style: TextStyle(fontSize: 16)),
                               ),
                               const SizedBox(width: 16),
                               const Column(
@@ -221,20 +240,14 @@ class _HomePageState extends State<HomePage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              hariIni?.tanggal ?? '-',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                            buildHariIniFutureBuilder(hariIni),
                             const SizedBox(height: 20),
                             Card(
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0), // Sudut Card dibulatkan
+                                borderRadius: BorderRadius.circular(
+                                    8.0), // Sudut Card dibulatkan
                               ),
-                              color:const Color(0xFF688E4E),
+                              color: const Color(0xFF688E4E),
                               child: Row(
                                 children: [
                                   Expanded(
@@ -246,7 +259,8 @@ class _HomePageState extends State<HomePage> {
                                           color: Color(0xFF688E4E),
                                           border: Border(
                                             right: BorderSide(
-                                              color: Colors.white, // Warna border kanan
+                                              color: Colors
+                                                  .white, // Warna border kanan
                                               width: 2.0, // Lebar border kanan
                                             ),
                                           ),
@@ -280,24 +294,31 @@ class _HomePageState extends State<HomePage> {
                                           ),
                                         ),
                                         child: Padding(
-                                          padding: const EdgeInsets.only(left: 12),
+                                          padding:
+                                              const EdgeInsets.only(left: 12),
                                           child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
                                               // Menggunakan SingleChildScrollView untuk teks yang panjang
                                               Container(
                                                   width: double.infinity,
-                                                  height: 15, // Atur ketinggian sesuai dengan kebutuhan Anda
+                                                  height:
+                                                      15, // Atur ketinggian sesuai dengan kebutuhan Anda
                                                   child: Marquee(
-                                                    text: "SELAMAT PAGI HOTMAN, SEMANGAT KERJANYA | ",
-                                                    startAfter: const Duration(seconds: 3),
+                                                    text:
+                                                        "SELAMAT PAGI HOTMAN, SEMANGAT KERJANYA | ",
+                                                    startAfter: const Duration(
+                                                        seconds: 3),
                                                     velocity: 25,
-                                                    style: const TextStyle(color: Colors.white),
+                                                    style: const TextStyle(
+                                                        color: Colors.white),
                                                   )),
                                               const Row(
                                                 children: [
                                                   Padding(
-                                                    padding: EdgeInsets.only(right: 5),
+                                                    padding: EdgeInsets.only(
+                                                        right: 5),
                                                     child: Card(
                                                       color: Colors.green,
                                                       child: Icon(
@@ -328,7 +349,8 @@ class _HomePageState extends State<HomePage> {
                             const SizedBox(height: 20),
                             Card(
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0), // Sudut Card dibulatkan
+                                borderRadius: BorderRadius.circular(
+                                    8.0), // Sudut Card dibulatkan
                               ),
                               color: const Color(0xFF688E4E),
                               child: Row(
@@ -342,7 +364,8 @@ class _HomePageState extends State<HomePage> {
                                           color: Color(0xFF688E4E),
                                           border: Border(
                                             right: BorderSide(
-                                              color: Colors.white, // Warna border kanan
+                                              color: Colors
+                                                  .white, // Warna border kanan
                                               width: 2.0, // Lebar border kanan
                                             ),
                                           ),
@@ -378,13 +401,16 @@ class _HomePageState extends State<HomePage> {
                                         child: const Padding(
                                           padding: EdgeInsets.only(left: 12),
                                           child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
                                               // Menggunakan SingleChildScrollView untuk teks yang panjang
                                               SizedBox(
-                                                height: 15, // Atur ketinggian sesuai dengan kebutuhan Anda
+                                                height:
+                                                    15, // Atur ketinggian sesuai dengan kebutuhan Anda
                                                 child: SingleChildScrollView(
-                                                  scrollDirection: Axis.horizontal, // Gulung teks secara horizontal
+                                                  scrollDirection: Axis
+                                                      .horizontal, // Gulung teks secara horizontal
                                                   child: Text(
                                                     "SELAMAT SORE HOTMAN PRIMUS, SAMPAI JUMPA BESOK`",
                                                     style: TextStyle(
@@ -397,7 +423,8 @@ class _HomePageState extends State<HomePage> {
                                               Row(
                                                 children: [
                                                   Padding(
-                                                    padding: EdgeInsets.only(right: 5),
+                                                    padding: EdgeInsets.only(
+                                                        right: 5),
                                                     child: Card(
                                                       color: Colors.green,
                                                       child: Icon(
@@ -439,11 +466,21 @@ class _HomePageState extends State<HomePage> {
                             leading: Text(riwayat[index].tanggal),
                             title: Row(children: [
                               Column(
-                                children: [Text(riwayat[index].masuk, style: const TextStyle(fontSize: 18)), const Text("Masuk", style: TextStyle(fontSize: 14))],
+                                children: [
+                                  Text(riwayat[index].masuk,
+                                      style: const TextStyle(fontSize: 18)),
+                                  const Text("Masuk",
+                                      style: TextStyle(fontSize: 14))
+                                ],
                               ),
                               const SizedBox(width: 20),
                               Column(
-                                children: [Text(riwayat[index].pulang, style: const TextStyle(fontSize: 18)), const Text("Pulang", style: TextStyle(fontSize: 14))],
+                                children: [
+                                  Text(riwayat[index].pulang,
+                                      style: const TextStyle(fontSize: 18)),
+                                  const Text("Pulang",
+                                      style: TextStyle(fontSize: 14))
+                                ],
                               ),
                             ]),
                           ),
@@ -455,7 +492,6 @@ class _HomePageState extends State<HomePage> {
               ));
             }
           }),
-      
     );
   }
 }

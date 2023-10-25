@@ -42,7 +42,7 @@ class _HomePageState extends State<HomePage> {
     var response = await myHttp.get(
         Uri.parse('https://cek-wa.com/presensi/public/api/get-presensi'),
         headers: headres);
-        print("Response dari server: " + response.body);
+    print("Response dari server: " + response.body);
     homeResponseModel = HomeResponseModel.fromJson(json.decode(response.body));
     riwayat.clear();
     homeResponseModel!.data.forEach((element) {
@@ -54,26 +54,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    String _getGreeting() {
-      final hour = DateTime.now().hour;
-      String greeting = '';
-
-      if (hour < 12) {
-        greeting = 'Pagi';
-      } else if (hour < 17) {
-        greeting = 'Siang';
-      } else if (hour < 20) {
-        greeting = 'Sore';
-      } else {
-        greeting = 'Malam';
-      }
-
-      return greeting;
-    }
-
-    Widget buildNameFutureBuilder(Future<String> future) {
+  Widget buildNameFutureBuilder(Future<String> future) {
       return FutureBuilder(
         future: future,
         builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
@@ -117,6 +98,57 @@ class _HomePageState extends State<HomePage> {
       }
     }
 
+    Widget MasukWidget() {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            hariIni?.masuk ?? '-',
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      );
+    }
+
+    Widget PulangWidget() {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            hariIni?.pulang ?? '-',
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      );
+    }
+
+    String _getGreeting() {
+      final hour = DateTime.now().hour;
+      String greeting = '';
+
+      if (hour < 12) {
+        greeting = 'Pagi';
+      } else if (hour < 15) {
+        greeting = 'Siang';
+      } else if (hour < 18) {
+        greeting = 'Sore';
+      } else {
+        greeting = 'Malam';
+      }
+
+      return greeting;
+    }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: FutureBuilder(
           future: getData(),
@@ -186,7 +218,7 @@ class _HomePageState extends State<HomePage> {
                                 radius: 30,
                                 lineWidth: 8,
                                 percent: 0.4,
-                                progressColor: Color(0xFF688E4E),
+                                progressColor: const Color(0xFF688E4E),
                                 backgroundColor: Colors.blue.shade100,
                                 circularStrokeCap: CircularStrokeCap.round,
                                 center: const Text('40%',
@@ -265,19 +297,7 @@ class _HomePageState extends State<HomePage> {
                                             ),
                                           ),
                                         ),
-                                        child: Center(
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(
-                                              hariIni?.masuk ?? '-',
-                                              style: const TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
+                                        child: MasukWidget(),
                                       ),
                                     ),
                                   ),
@@ -300,36 +320,67 @@ class _HomePageState extends State<HomePage> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              // Menggunakan SingleChildScrollView untuk teks yang panjang
-                                              Container(
+                                              if (hariIni?.masuk != null)
+                                                Container(
                                                   width: double.infinity,
-                                                  height:
-                                                      15, // Atur ketinggian sesuai dengan kebutuhan Anda
-                                                  child: Marquee(
-                                                    text:
-                                                        "SELAMAT PAGI HOTMAN, SEMANGAT KERJANYA | ",
-                                                    startAfter: const Duration(
-                                                        seconds: 3),
-                                                    velocity: 25,
-                                                    style: const TextStyle(
-                                                        color: Colors.white),
-                                                  )),
-                                              const Row(
+                                                  height: 15,
+                                                  child: FutureBuilder<String>(
+                                                    future: _name,
+                                                    builder: (BuildContext
+                                                            context,
+                                                        AsyncSnapshot<String>
+                                                            snapshot) {
+                                                      if (snapshot
+                                                              .connectionState ==
+                                                          ConnectionState
+                                                              .waiting) {
+                                                        return const CircularProgressIndicator();
+                                                      } else if (snapshot
+                                                          .hasError) {
+                                                        return Text(
+                                                            "Error: ${snapshot.error}");
+                                                      } else if (snapshot
+                                                          .hasData) {
+                                                        final nama =
+                                                            snapshot.data!;
+                                                        return Marquee(
+                                                          text:
+                                                              "SELAMAT ${_getGreeting().toUpperCase()} ${nama.toUpperCase()}, SEMANGAT KERJANYA | ",
+                                                          startAfter:
+                                                              const Duration(
+                                                                  seconds: 3),
+                                                          velocity: 25,
+                                                          style:
+                                                              const TextStyle(
+                                                                  color: Colors
+                                                                      .white),
+                                                        );
+                                                      } else {
+                                                        return const Text(
+                                                            "Tidak ada data");
+                                                      }
+                                                    },
+                                                  ),
+                                                )
+                                              else
+                                                const Text(
+                                                    ""), // Widget kosong jika masuk adalah null
+                                              Row(
                                                 children: [
                                                   Padding(
                                                     padding: EdgeInsets.only(
                                                         right: 5),
                                                     child: Card(
-                                                      color: Colors.green,
+                                                      color: hariIni?.masuk != null ? Colors.green : Colors.red,
                                                       child: Icon(
-                                                        Icons.check,
+                                                        hariIni?.masuk != null ? Icons.check : Icons.close,
                                                         color: Colors.white,
                                                         size: 20,
                                                       ),
                                                     ),
                                                   ),
                                                   Text(
-                                                    "BERHASIL",
+                                                    hariIni?.masuk != null ? "Berhasil" : "Gagal",
                                                     style: TextStyle(
                                                       color: Colors.white,
                                                       fontSize: 12,
@@ -342,7 +393,7 @@ class _HomePageState extends State<HomePage> {
                                         ),
                                       ),
                                     ),
-                                  ),
+                                  )
                                 ],
                               ),
                             ),
@@ -373,14 +424,7 @@ class _HomePageState extends State<HomePage> {
                                         child: Center(
                                           child: Padding(
                                             padding: const EdgeInsets.all(8.0),
-                                            child: Text(
-                                              hariIni?.pulang ?? '-',
-                                              style: const TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
+                                            child: PulangWidget(),
                                           ),
                                         ),
                                       ),
@@ -398,44 +442,74 @@ class _HomePageState extends State<HomePage> {
                                             bottomLeft: Radius.circular(8.0),
                                           ),
                                         ),
-                                        child: const Padding(
-                                          padding: EdgeInsets.only(left: 12),
+                                        child: Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 12),
                                           child: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              // Menggunakan SingleChildScrollView untuk teks yang panjang
-                                              SizedBox(
-                                                height:
-                                                    15, // Atur ketinggian sesuai dengan kebutuhan Anda
-                                                child: SingleChildScrollView(
-                                                  scrollDirection: Axis
-                                                      .horizontal, // Gulung teks secara horizontal
-                                                  child: Text(
-                                                    "SELAMAT SORE HOTMAN PRIMUS, SAMPAI JUMPA BESOK`",
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 12,
-                                                    ),
+                                              if (hariIni?.pulang != null)
+                                                Container(
+                                                  width: double.infinity,
+                                                  height: 15,
+                                                  child: FutureBuilder<String>(
+                                                    future: _name,
+                                                    builder: (BuildContext
+                                                            context,
+                                                        AsyncSnapshot<String>
+                                                            snapshot) {
+                                                      if (snapshot
+                                                              .connectionState ==
+                                                          ConnectionState
+                                                              .waiting) {
+                                                        return const CircularProgressIndicator();
+                                                      } else if (snapshot
+                                                          .hasError) {
+                                                        return Text(
+                                                            "Error: ${snapshot.error}");
+                                                      } else if (snapshot
+                                                          .hasData) {
+                                                        final nama =
+                                                            snapshot.data!;
+                                                        return Marquee(
+                                                          text:
+                                                              "SELAMAT ${_getGreeting().toUpperCase()} ${nama.toUpperCase()}, SAMPAI JUMPA BESOK | ",
+                                                          startAfter:
+                                                              const Duration(
+                                                                  seconds: 3),
+                                                          velocity: 25,
+                                                          style:
+                                                              const TextStyle(
+                                                                  color: Colors
+                                                                      .white),
+                                                        );
+                                                      } else {
+                                                        return const Text(
+                                                            "Tidak ada data");
+                                                      }
+                                                    },
                                                   ),
-                                                ),
-                                              ),
+                                                )
+                                              else
+                                                const Text(
+                                                    ""), // Widget kosong jika masuk adalah null
                                               Row(
                                                 children: [
                                                   Padding(
                                                     padding: EdgeInsets.only(
                                                         right: 5),
                                                     child: Card(
-                                                      color: Colors.green,
+                                                      color: hariIni?.pulang != null ? Colors.green : Colors.red,
                                                       child: Icon(
-                                                        Icons.check,
+                                                        hariIni?.pulang != null ? Icons.check : Icons.close,
                                                         color: Colors.white,
                                                         size: 20,
                                                       ),
                                                     ),
                                                   ),
                                                   Text(
-                                                    "BERHASIL",
+                                                    hariIni?.pulang != null ? "Berhasil" : "Gagal",
                                                     style: TextStyle(
                                                       color: Colors.white,
                                                       fontSize: 12,

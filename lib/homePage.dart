@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:marquee/marquee.dart';
 import 'package:project/models/home-response.dart';
-import 'package:project/simpanPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as myHttp;
 import 'package:percent_indicator/percent_indicator.dart';
@@ -169,7 +168,7 @@ class _HomePageState extends State<HomePage> {
                                 radius: 30,
                                 lineWidth: 8,
                                 percent: 0.4,
-                                progressColor: Colors.blue,
+                                progressColor: Color(0xFF688E4E),
                                 backgroundColor: Colors.blue.shade100,
                                 circularStrokeCap: CircularStrokeCap.round,
                                 center: const Text('40%', style: TextStyle(fontSize: 16)),
@@ -456,16 +455,7 @@ class _HomePageState extends State<HomePage> {
               ));
             }
           }),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context)
-              .push(MaterialPageRoute(builder: (context) => const SimpanPage()))
-              .then((value) {
-            setState(() {});
-          });
-        },
-        child: const Icon(Icons.add),
-      ),
+      
     );
   }
 }

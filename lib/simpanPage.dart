@@ -138,12 +138,12 @@ class _SimpanPageState extends State<SimpanPage> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
-                                Icon(
+                                const Icon(
                                   Icons.location_on,
                                   size: 30,
                                   color: Colors.red,
                                 ),
-                                SizedBox(width: 9),
+                                const SizedBox(width: 9),
                                 Column(
                                   children: [
                                     FutureBuilder<LocationData?>(
@@ -158,7 +158,7 @@ class _SimpanPageState extends State<SimpanPage> {
                                                   -7.01996 &&
                                               currentLocation.longitude ==
                                                   110.3083233) {
-                                            return Text(
+                                            return const Text(
                                               "SMK BAGIMU NEGERIKU",
                                               style: TextStyle(
                                                 fontSize: 18,
@@ -166,7 +166,7 @@ class _SimpanPageState extends State<SimpanPage> {
                                               ),
                                             );
                                           } else {
-                                            return Text(
+                                            return const Text(
                                               "Lokasi Saat Ini:",
                                               style: TextStyle(
                                                 fontSize: 18,
@@ -195,7 +195,7 @@ class _SimpanPageState extends State<SimpanPage> {
                             },
                             child: const Text("Simpan Presensi"),
                             style: ElevatedButton.styleFrom(
-                              minimumSize: Size(340, 36),
+                              minimumSize: const Size(340, 36),
                               primary: const Color(
                                   0xFF1E232C), // Atur warna latar belakang tombol
                             ),

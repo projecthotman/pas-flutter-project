@@ -1,7 +1,8 @@
-// ignore_for_file: unused_import
 
 import 'dart:convert';
 import 'package:http/http.dart' as myHttp;
+import 'dart:js';
+
 import 'package:flutter/material.dart';
 import 'package:project/loginPage.dart';
 import 'package:project/tabbar/master.dart';
@@ -10,12 +11,19 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/home-response.dart';
 import '../models/login-response.dart';
 
+
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
 }
+
+  Future<void> logout(SharedPreferences prefs) async {
+    prefs.remove("token");
+    Navigator.of(context as BuildContext).pushReplacement(MaterialPageRoute(builder: (context) => const LoginPage()));
+  }
+
 
 class _ProfilePageState extends State<ProfilePage> {
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();

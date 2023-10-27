@@ -7,6 +7,7 @@ import 'package:project/simpanPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as myHttp;
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:intl/intl.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -22,6 +23,50 @@ class _HomePageState extends State<HomePage> {
   Datum? hariIni;
   List<Datum> riwayat = [];
   bool isLoading = true;
+
+  DateTime parseTanggal(String tanggalString) {
+    final bulanList = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+
+    final parts = tanggalString.split(', ');
+    if (parts.length == 2) {
+      final tanggalParts = parts[1].split(' ');
+      if (tanggalParts.length == 3) {
+        final tanggal = int.tryParse(tanggalParts[0]);
+        final bulan = bulanList.indexOf(tanggalParts[1]) + 1;
+        final tahun = int.tryParse(tanggalParts[2]);
+
+        if (tanggal != null && bulan != -1 && tahun != null) {
+          return DateTime(tahun, bulan, tanggal);
+        }
+      }
+    }
+
+    throw FormatException('Format tanggal tidak valid: $tanggalString');
+  }
+
+  String konversiKeFormatTeks(DateTime tanggal) {
+    final formattedDate = DateFormat('EEEE, d MMMM y', 'id_ID').format(tanggal);
+    return formattedDate;
+  }
+
+  int hitungJumlahPresensi(List<Datum> riwayat) {
+    final sekarang = DateTime.now();
+    final bulanIni = sekarang.month;
+    final tahunIni = sekarang.year;
+
+    int jumlahPresensi = 0;
+
+    for (final presensi in riwayat) {
+      final tanggalPresensi = parseTanggal(presensi.tanggal);
+      final formattedTanggalPresensi = konversiKeFormatTeks(tanggalPresensi);
+
+      if (tanggalPresensi.month == bulanIni && tanggalPresensi.year == tahunIni) {
+        jumlahPresensi++;
+      }
+    }
+
+    return jumlahPresensi;
+  }
 
   @override
   void initState() {
@@ -45,9 +90,7 @@ class _HomePageState extends State<HomePage> {
 
         headers: headres);
     print("Response dari server: " + response.body);
-
-     
-
+    
     homeResponseModel = HomeResponseModel.fromJson(json.decode(response.body));
     riwayat.clear();
     homeResponseModel!.data.forEach((element) {
@@ -173,8 +216,7 @@ class _HomePageState extends State<HomePage> {
                       child: Row(
                         children: [
                           Column(
-                            crossAxisAlignment: CrossAxisAlignment
-                                .start, // Agar teks sejajar kiri
+                            crossAxisAlignment: CrossAxisAlignment.start, // Agar teks sejajar kiri
                             children: <Widget>[
                               Row(
                                 children: [
@@ -202,8 +244,7 @@ class _HomePageState extends State<HomePage> {
                               padding: EdgeInsets.all(8.0),
                               child: Icon(
                                 Icons.notifications,
-                                color: Colors
-                                    .black, // Ubah warna ikon notifikasi sesuai preferensi Anda
+                                color: Colors.black, // Ubah warna ikon notifikasi sesuai preferensi Anda
                               ),
                             ),
                           ),
@@ -222,12 +263,11 @@ class _HomePageState extends State<HomePage> {
                               CircularPercentIndicator(
                                 radius: 30,
                                 lineWidth: 8,
-                                percent: 0.4,
+                                percent: (hitungJumlahPresensi(riwayat) / 20).clamp(0.0, 1.0),
                                 progressColor: const Color(0xFF688E4E),
                                 backgroundColor: Colors.blue.shade100,
                                 circularStrokeCap: CircularStrokeCap.round,
-                                center: const Text('40%',
-                                    style: TextStyle(fontSize: 16)),
+                                center: Text('${(hitungJumlahPresensi(riwayat) / 20 * 100).toStringAsFixed(0)}%', style: const TextStyle(fontSize: 16)),
                               ),
                               const SizedBox(width: 16),
                               const Column(
@@ -281,8 +321,7 @@ class _HomePageState extends State<HomePage> {
                             const SizedBox(height: 20),
                             Card(
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                    8.0), // Sudut Card dibulatkan
+                                borderRadius: BorderRadius.circular(8.0), // Sudut Card dibulatkan
                               ),
                               color: const Color(0xFF688E4E),
                               child: Row(
@@ -296,8 +335,7 @@ class _HomePageState extends State<HomePage> {
                                           color: Color(0xFF688E4E),
                                           border: Border(
                                             right: BorderSide(
-                                              color: Colors
-                                                  .white, // Warna border kanan
+                                              color: Colors.white, // Warna border kanan
                                               width: 2.0, // Lebar border kanan
                                             ),
                                           ),
@@ -319,11 +357,9 @@ class _HomePageState extends State<HomePage> {
                                           ),
                                         ),
                                         child: Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 12),
+                                          padding: const EdgeInsets.only(left: 12),
                                           child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               if (hariIni?.masuk != null)
                                                 Container(
@@ -373,8 +409,7 @@ class _HomePageState extends State<HomePage> {
                                               Row(
                                                 children: [
                                                   Padding(
-                                                    padding: EdgeInsets.only(
-                                                        right: 5),
+                                                    padding: EdgeInsets.only(right: 5),
                                                     child: Card(
                                                       color: hariIni?.masuk != null ? Colors.green : Colors.red,
                                                       child: Icon(
@@ -405,8 +440,7 @@ class _HomePageState extends State<HomePage> {
                             const SizedBox(height: 20),
                             Card(
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                    8.0), // Sudut Card dibulatkan
+                                borderRadius: BorderRadius.circular(8.0), // Sudut Card dibulatkan
                               ),
                               color: const Color(0xFF688E4E),
                               child: Row(
@@ -420,8 +454,7 @@ class _HomePageState extends State<HomePage> {
                                           color: Color(0xFF688E4E),
                                           border: Border(
                                             right: BorderSide(
-                                              color: Colors
-                                                  .white, // Warna border kanan
+                                              color: Colors.white, // Warna border kanan
                                               width: 2.0, // Lebar border kanan
                                             ),
                                           ),
@@ -451,8 +484,7 @@ class _HomePageState extends State<HomePage> {
                                           padding:
                                               const EdgeInsets.only(left: 12),
                                           child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               if (hariIni?.pulang != null)
                                                 Container(
@@ -502,8 +534,7 @@ class _HomePageState extends State<HomePage> {
                                               Row(
                                                 children: [
                                                   Padding(
-                                                    padding: EdgeInsets.only(
-                                                        right: 5),
+                                                    padding: EdgeInsets.only(right: 5),
                                                     child: Card(
                                                       color: hariIni?.pulang != null ? Colors.green : Colors.red,
                                                       child: Icon(
@@ -545,21 +576,11 @@ class _HomePageState extends State<HomePage> {
                             leading: Text(riwayat[index].tanggal),
                             title: Row(children: [
                               Column(
-                                children: [
-                                  Text(riwayat[index].masuk,
-                                      style: const TextStyle(fontSize: 18)),
-                                  const Text("Masuk",
-                                      style: TextStyle(fontSize: 14))
-                                ],
+                                children: [Text(riwayat[index].masuk, style: const TextStyle(fontSize: 18)), const Text("Masuk", style: TextStyle(fontSize: 14))],
                               ),
                               const SizedBox(width: 20),
                               Column(
-                                children: [
-                                  Text(riwayat[index].pulang,
-                                      style: const TextStyle(fontSize: 18)),
-                                  const Text("Pulang",
-                                      style: TextStyle(fontSize: 14))
-                                ],
+                                children: [Text(riwayat[index].pulang, style: const TextStyle(fontSize: 18)), const Text("Pulang", style: TextStyle(fontSize: 14))],
                               ),
                             ]),
                           ),

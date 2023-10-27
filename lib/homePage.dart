@@ -42,7 +42,7 @@ class _HomePageState extends State<HomePage> {
     var response = await myHttp.get(
         Uri.parse('https://cek-wa.com/presensi/public/api/get-presensi'),
         headers: headres);
-        print("Response dari server: " + response.body);
+    print("Response dari server: " + response.body);
     homeResponseModel = HomeResponseModel.fromJson(json.decode(response.body));
     riwayat.clear();
     homeResponseModel!.data.forEach((element) {

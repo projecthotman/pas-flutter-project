@@ -4,11 +4,9 @@
 
 import 'dart:convert';
 
-HomeResponseModel homeResponseModelFromJson(String str) =>
-    HomeResponseModel.fromJson(json.decode(str));
+HomeResponseModel homeResponseModelFromJson(String str) => HomeResponseModel.fromJson(json.decode(str));
 
-String homeResponseModelToJson(HomeResponseModel data) =>
-    json.encode(data.toJson());
+String homeResponseModelToJson(HomeResponseModel data) => json.encode(data.toJson());
 
 class HomeResponseModel {
   HomeResponseModel({
@@ -21,8 +19,7 @@ class HomeResponseModel {
   List<Datum> data;
   String message;
 
-  factory HomeResponseModel.fromJson(Map<String, dynamic> json) =>
-      HomeResponseModel(
+  factory HomeResponseModel.fromJson(Map<String, dynamic> json) => HomeResponseModel(
         success: json["success"],
         data: List<Datum>.from(json["data"].map((x) => Datum.fromJson(x))),
         message: json["message"],

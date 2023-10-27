@@ -45,6 +45,7 @@ dependencies:
   marquee: ^2.2.3
   flutter_onboarding: ^1.0.6
   percent_indicator: ^4.2.3
+  intl: ^0.17.0
 
 dev_dependencies:
   flutter_test:

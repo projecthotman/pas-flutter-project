@@ -37,9 +37,7 @@ class _LoginPageState extends State<LoginPage> {
     String nameStr = await name;
     if (tokenStr != "" && nameStr != "") {
       Future.delayed(const Duration(seconds: 1), () async {
-        Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => const MasterTabbar()))
-            .then((value) {
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) => const MasterTabbar())).then((value) {
           setState(() {});
         });
       });
@@ -49,16 +47,12 @@ class _LoginPageState extends State<LoginPage> {
   Future login(email, password) async {
     LoginResponseModel? loginResponseModel;
     Map<String, String> body = {"email": email, "password": password};
-    var response = await myHttp.post(
-        Uri.parse('https://cek-wa.com/presensi/public/api/login'),
-        body: body);
+    var response = await myHttp.post(Uri.parse('https://cek-wa.com/presensi/public/api/login'), body: body);
     if (response.statusCode == 401) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Email atau password salah")));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Email atau password salah")));
     } else {
-      loginResponseModel =
-          LoginResponseModel.fromJson(json.decode(response.body));
-          print('HASIL ' + response.body);
+      loginResponseModel = LoginResponseModel.fromJson(json.decode(response.body));
+      print('HASIL ' + response.body);
       saveUser(loginResponseModel.data.token, loginResponseModel.data.name);
     }
   }
@@ -68,14 +62,11 @@ class _LoginPageState extends State<LoginPage> {
       final SharedPreferences pref = await _prefs;
       pref.setString("name", name);
       pref.setString("token", token);
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => const MasterTabbar()))
-          .then((value) {
+      Navigator.of(context).push(MaterialPageRoute(builder: (context) => const MasterTabbar())).then((value) {
         setState(() {});
       });
     } catch (err) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(err.toString())));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err.toString())));
     }
   }
 
@@ -107,11 +98,7 @@ class _LoginPageState extends State<LoginPage> {
                     width: MediaQuery.of(context).size.width * 0.8,
                     child: const Text(
                       "Welcome back! Glad to see you, Again!",
-                      style: TextStyle(
-                        fontSize: 30,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFF688E4E)
-                      ),
+                      style: TextStyle(fontSize: 30, fontWeight: FontWeight.w700, color: Color(0xFF688E4E)),
                     ),
                   ),
                 ),
@@ -183,9 +170,7 @@ class _LoginPageState extends State<LoginPage> {
                               });
                             },
                             icon: Icon(
-                              _isPasswordObscured
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
+                              _isPasswordObscured ? Icons.visibility : Icons.visibility_off,
                               color: Color(0xFF8391A1),
                             ),
                           ),
@@ -211,8 +196,7 @@ class _LoginPageState extends State<LoginPage> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           onPressed: () {
-                            login(
-                                emailController.text, passwordController.text);
+                            login(emailController.text, passwordController.text);
                           },
                           child: const Padding(
                             padding: EdgeInsets.all(15.0),
@@ -244,10 +228,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const TellAdmin()));
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => const TellAdmin()));
                         },
                         child: const Text(
                           "Tell admin",

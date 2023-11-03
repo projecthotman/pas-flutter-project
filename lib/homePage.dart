@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:marquee/marquee.dart';
 import 'package:project/models/home-response.dart';
-import 'package:project/simpanPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as myHttp;
 import 'package:percent_indicator/percent_indicator.dart';
@@ -20,6 +19,7 @@ class _HomePageState extends State<HomePage> {
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   late Future<String> _name, _token;
   HomeResponseModel? homeResponseModel;
+  HomeResponseModel? presensiResponModel;
   Datum? hariIni;
   List<Datum> riwayat = [];
   bool isLoading = true;
@@ -56,8 +56,12 @@ class _HomePageState extends State<HomePage> {
 
     int jumlahPresensi = 0;
 
+
+
     for (final presensi in riwayat) {
+
       final tanggalPresensi = parseTanggal(presensi.tanggal);
+
       final formattedTanggalPresensi = konversiKeFormatTeks(tanggalPresensi);
 
       if (tanggalPresensi.month == bulanIni && tanggalPresensi.year == tahunIni) {
@@ -67,6 +71,7 @@ class _HomePageState extends State<HomePage> {
 
     return jumlahPresensi;
   }
+    int totalPresensi = 0;
 
   @override
   void initState() {
@@ -79,28 +84,44 @@ class _HomePageState extends State<HomePage> {
     _name = _prefs.then((SharedPreferences prefs) {
       return prefs.getString("name") ?? "";
     });
+    getData();
   }
 
   Future getData() async {
-    final Map<String, String> headres = {
-      'Authorization': 'Bearer ' + await _token
-    };
-    var response = await myHttp.get(
-        Uri.parse('https://cek-wa.com/presensi/public/api/get-presensi'),
+  final Map<String, String> headers = {
+    'Authorization': 'Bearer ' + await _token
+  };
 
-        headers: headres);
-    print("Response dari server: " + response.body);
-    
-    homeResponseModel = HomeResponseModel.fromJson(json.decode(response.body));
+  // Mendapatkan data dari API
+  final homeResponse = await myHttp.get(
+    Uri.parse('http://10.0.2.2:8000/api/get-presensi'),
+    headers: headers,
+  );
+
+  final presensiResponse = await myHttp.get(
+    Uri.parse('http://10.0.2.2:8000/api/get-total-presensi'),
+    headers: headers,
+  );
+
+  print("Response dari server (Home): " + homeResponse.body);
+  print("Response dari server (Presensi): " + presensiResponse.body);
+
+  final homeResponseModel = HomeResponseModel.fromJson(json.decode(homeResponse.body));
+  final presensiResponseModel = PresensiResponModel.fromJson(json.decode(presensiResponse.body));
+
+  setState(() {
+    totalPresensi = presensiResponseModel.totalPresensi!;
     riwayat.clear();
-    homeResponseModel!.data.forEach((element) {
+    homeResponseModel.data.forEach((element) {
       if (element.isHariIni) {
         hariIni = element;
       } else {
         riwayat.add(element);
       }
     });
-  }
+  });
+}
+
 
   Widget buildNameFutureBuilder(Future<String> future) {
       return FutureBuilder(
@@ -595,3 +616,31 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+
+// void _showDetailModal(BuildContext context, RiwayatItem item) {
+//   showDialog(
+//     context: context,
+//     builder: (BuildContext context) {
+//       return AlertDialog(
+//         title: Text("Detail Riwayat"),
+//         content: Column(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             Text("Tanggal: ${item.tanggal}"),
+//             Text("Masuk: ${item.masuk}"),
+//             Text("Pulang: ${item.pulang}"),
+//           ],
+//         ),
+//         actions: [
+//           TextButton(
+//             onPressed: () {
+//               Navigator.of(context).pop();
+//             },
+//             child: Text("Tutup"),
+//           ),
+//         ],
+//       );
+//     },
+//   );
+// }
+

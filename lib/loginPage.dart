@@ -85,28 +85,6 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  padding: const EdgeInsets.all(35),
-                  child: Align(
-                    alignment: Alignment.topRight,
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => MasterTabbar(),
-                        ));
-                      },
-                      child: const Text(
-                        "Lewati",
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black45, // Warna teks yang diklik
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-
                 Center(
                   child: Image.asset(
                     "assets/enter.png",
@@ -121,10 +99,7 @@ class _LoginPageState extends State<LoginPage> {
                     width: MediaQuery.of(context).size.width * 0.8,
                     child: const Text(
                       "Selamat Datang Kembali, Silahkan Login! ",
-                      style: TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.w700,
-                          color: Color(0xFF688E4E)),
+                      style: TextStyle(fontSize: 30, fontWeight: FontWeight.w700, color: Color(0xFF688E4E)),
                     ),
                   ),
                 ),
@@ -196,9 +171,7 @@ class _LoginPageState extends State<LoginPage> {
                               });
                             },
                             icon: Icon(
-                              _isPasswordObscured
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
+                              _isPasswordObscured ? Icons.visibility : Icons.visibility_off,
                               color: const Color(0xFF8391A1),
                             ),
                           ),

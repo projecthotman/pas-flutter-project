@@ -186,17 +186,7 @@ class _ProfilePageState extends State<ProfilePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  InkWell(
-                    onTap: () async {},
-                    child: const ListTile(
-                      leading: Icon(
-                        Icons.help_outline_sharp,
-                        color: Color(0xFF688E4E),
-                      ),
-                      title: Text('Bantuan'),
-                      trailing: Icon(Icons.chevron_right),
-                    ),
-                  ),
+                  
                   InkWell(
                     onTap: () async {
                       final prefs = await SharedPreferences.getInstance();

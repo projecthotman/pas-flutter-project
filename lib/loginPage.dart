@@ -48,7 +48,7 @@ class _LoginPageState extends State<LoginPage> {
   Future login(email, password) async {
     LoginResponseModel? loginResponseModel;
     Map<String, String> body = {"email": email, "password": password};
-    var response = await myHttp.post(Uri.parse('https://cek-wa.com/presensi/public/api/login'), body: body);
+    var response = await myHttp.post(Uri.parse('http://10.0.2.2:8000/api/login'), body: body);
     if (response.statusCode == 401) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Email atau password salah")));
     } else {

@@ -63,7 +63,7 @@ class _SimpanPageState extends State<SimpanPage> {
     Map<String, String> headers = {'Authorization': 'Bearer ' + await _token};
 
     var response = await myHttp.post(
-        Uri.parse("https://cek-wa.com/presensi/public/api/save-presensi"),
+        Uri.parse("http://10.0.2.2:8000/api/save-presensi"),
         body: body,
         headers: headers);
     savePresensiResponseModel =
@@ -107,19 +107,6 @@ class _SimpanPageState extends State<SimpanPage> {
                               urlTemplate:
                                   "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                             ),
-                            // MapCircleLayer(
-                            //   circles: Set.from([
-                            //     MapCircle(
-                            //       center: MapLatLng(
-                            //         currentLocation.latitude!,
-                            //         currentLocation.longitude!,
-                            //       ),
-                            //       radius: 1000, // Radius dalam meter
-                            //       color: Colors.blue.withOpacity(0.3),
-                            //       strokeWidth: 2,
-                            //     ),
-                            //   ]),
-                            // ),
                           ],
                         )),
                   ),

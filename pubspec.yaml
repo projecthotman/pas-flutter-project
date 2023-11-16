@@ -46,8 +46,6 @@ dependencies:
   flutter_onboarding: ^1.0.6
   intl: ^0.18.1
   percent_indicator: ^4.2.3
-  flutter_native_splash: ^2.3.5
-
 dev_dependencies:
   flutter_test:
     sdk: flutter

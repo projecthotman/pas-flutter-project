@@ -214,8 +214,8 @@ class _SimpanPageState extends State<SimpanPage> {
                             ),
                             child: const Text("Simpan Presensi"),
                           ),
-                          const SizedBox(height: 10),
-                          ElevatedButton(onPressed: (){ToMap2(context);}, child: const Text("Peta2"))
+                          // const SizedBox(height: 10),
+                          // ElevatedButton(onPressed: (){ToMap2(context);}, child: const Text("Peta2"))
                         ],
                       ),
                     ),
@@ -232,10 +232,10 @@ class _SimpanPageState extends State<SimpanPage> {
   }
 }
 
-void ToMap2(BuildContext context) {
-  // Gunakan Navigator untuk berpindah ke halaman Map2
-  Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => Map2()),
-  );
-}
+// void ToMap2(BuildContext context) {
+//   // Gunakan Navigator untuk berpindah ke halaman Map2
+//   Navigator.push(
+//     context,
+//     MaterialPageRoute(builder: (context) => Map2()),
+//   );
+// }

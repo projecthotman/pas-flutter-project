@@ -1,15 +1,19 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:location/location.dart';
-import 'package:project/models/save-presensi-response.dart';
+import 'package:project/models/save_presensi_response.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_maps/maps.dart';
-import 'package:http/http.dart' as myHttp;
+import 'package:http/http.dart' as my_http;
 import 'tabbar/master.dart';
 
+import 'dart:math' as math;
+
+
+import 'map.dart';
+
 class SimpanPage extends StatefulWidget {
+  // ignore: use_super_parameters
   const SimpanPage({Key? key}) : super(key: key);
 
   @override
@@ -54,27 +58,46 @@ class _SimpanPageState extends State<SimpanPage> {
     return await location.getLocation();
   }
 
+  // Fungsi untuk menghitung jarak antara dua titik menggunakan Haversine formula
+  double _calculateHaversineDistance(
+    double lat1,
+    double lon1,
+    double lat2,
+    double lon2,
+  ) {
+    const double earthRadius = 6371; // Radius bumi dalam kilometer
+
+    double dLat = _degreesToRadians(lat2 - lat1);
+    double dLon = _degreesToRadians(lon2 - lon1);
+
+    double a = math.sin(dLat / 2) * math.sin(dLat / 2) + math.cos(_degreesToRadians(lat1)) * math.cos(_degreesToRadians(lat2)) * math.sin(dLon / 2) * math.sin(dLon / 2);
+
+    double c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a));
+
+    return earthRadius * c;
+  }
+
+// Fungsi bantu untuk mengonversi derajat ke radian
+  double _degreesToRadians(double degrees) {
+    return degrees * (math.pi / 180);
+  }
+
   Future savePresensi(latitude, longitude) async {
     SavePresensiResponseModel savePresensiResponseModel;
-    Map<String, String> body = {
-      "latitude": latitude.toString(),
-      "longitude": longitude.toString()
-    };
-    Map<String, String> headers = {'Authorization': 'Bearer ' + await _token};
+    Map<String, String> body = {"latitude": latitude.toString(), "longitude": longitude.toString()};
+    Map<String, String> headers = {'Authorization': 'Bearer ${await _token}'};
 
-    var response = await myHttp.post(
-        Uri.parse("http://10.0.2.2:8000/api/save-presensi"),
-        body: body,
-        headers: headers);
-    savePresensiResponseModel =
-        SavePresensiResponseModel.fromJson(json.decode(response.body));
+    var response = await my_http.post(Uri.parse("http://10.0.2.2:8000/api/save-presensi"), body: body, headers: headers);
+    // print('Response from server: ${response.body}');
+    savePresensiResponseModel = SavePresensiResponseModel.fromJson(json.decode(response.body));
     if (savePresensiResponseModel.success) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Sukses simpan Presensi')));
-       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MasterTabbar())); 
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Sukses simpan Presensi')));
+      // ignore: use_build_context_synchronously
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MasterTabbar()));
     } else {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Gagal simpan Presensi')));
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Gagal simpan Presensi')));
     }
   }
 
@@ -86,15 +109,13 @@ class _SimpanPageState extends State<SimpanPage> {
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
             if (snapshot.hasData) {
               final LocationData currentLocation = snapshot.data;
-              print("KODING : " +
-                  currentLocation.latitude.toString() +
-                  " | " +
-                  currentLocation.longitude.toString());
+              // ignore: avoid_print
+              print("Lokasi Anda : ${currentLocation.latitude} | ${currentLocation.longitude}");
               return SafeArea(
                   child: Column(
                 children: [
                   Expanded(
-                    child: Container(
+                    child: SizedBox(
                         height: 400,
                         child: SfMaps(
                           layers: <MapLayer>[
@@ -104,8 +125,7 @@ class _SimpanPageState extends State<SimpanPage> {
                                 currentLocation.longitude!,
                               ),
                               initialZoomLevel: 15,
-                              urlTemplate:
-                                  "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                              urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                             ),
                           ],
                         )),
@@ -136,16 +156,25 @@ class _SimpanPageState extends State<SimpanPage> {
                                   children: [
                                     FutureBuilder<LocationData?>(
                                       future: _currenctLocation(),
-                                      builder: (BuildContext context,
-                                          AsyncSnapshot<LocationData?>
-                                              snapshot) {
+                                      builder: (BuildContext context, AsyncSnapshot<LocationData?> snapshot) {
                                         if (snapshot.hasData) {
-                                          final LocationData? currentLocation =
-                                              snapshot.data;
-                                          if (currentLocation!.latitude ==
-                                                  -7.01996 &&
-                                              currentLocation.longitude ==
-                                                  110.3083233) {
+                                          final LocationData? currentLocation = snapshot.data;
+
+                                          double centerLatitude = -7.019950742580668;
+                                          double centerLongitude = 110.30832545032034;
+
+                                          // Jarak maksimal yang diterima sebagai bagian dari wilayah (misalnya 0.1 derajat)
+                                          double maxDistance = 0.3;
+
+                                          // Menghitung jarak antara dua titik menggunakan Haversine formula
+                                          double distance = _calculateHaversineDistance(
+                                            currentLocation!.latitude!,
+                                            currentLocation.longitude!,
+                                            centerLatitude,
+                                            centerLongitude,
+                                          );
+
+                                          if (distance <= maxDistance) {
                                             return const Text(
                                               "SMK BAGIMU NEGERIKU",
                                               style: TextStyle(
@@ -155,7 +184,7 @@ class _SimpanPageState extends State<SimpanPage> {
                                             );
                                           } else {
                                             return const Text(
-                                              "Lokasi Saat Ini:",
+                                              "KAMU NANYAA.....",
                                               style: TextStyle(
                                                 fontSize: 18,
                                                 fontWeight: FontWeight.bold,
@@ -168,8 +197,7 @@ class _SimpanPageState extends State<SimpanPage> {
                                           );
                                         }
                                       },
-                                    ),
-                                    // ...
+                                    )
                                   ],
                                 )
                               ],
@@ -178,16 +206,16 @@ class _SimpanPageState extends State<SimpanPage> {
                           const SizedBox(height: 20),
                           ElevatedButton(
                             onPressed: () {
-                              savePresensi(currentLocation.latitude,
-                                  currentLocation.longitude);
+                              savePresensi(currentLocation.latitude, currentLocation.longitude);
                             },
-                            child: const Text("Simpan Presensi"),
                             style: ElevatedButton.styleFrom(
                               minimumSize: const Size(340, 36),
-                              primary: const Color(
-                                  0xFF1E232C), // Atur warna latar belakang tombol
+                              backgroundColor: const Color(0xFF1E232C), // Atur warna latar belakang tombol
                             ),
-                          )
+                            child: const Text("Simpan Presensi"),
+                          ),
+                          // const SizedBox(height: 10),
+                          // ElevatedButton(onPressed: (){ToMap2(context);}, child: const Text("Peta2"))
                         ],
                       ),
                     ),
@@ -203,3 +231,11 @@ class _SimpanPageState extends State<SimpanPage> {
     );
   }
 }
+
+// void ToMap2(BuildContext context) {
+//   // Gunakan Navigator untuk berpindah ke halaman Map2
+//   Navigator.push(
+//     context,
+//     MaterialPageRoute(builder: (context) => Map2()),
+//   );
+// }

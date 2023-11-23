@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:marquee/marquee.dart';
+import 'package:project/allRiwayat.dart';
 import 'package:project/models/home-response.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as myHttp;
@@ -56,10 +57,7 @@ class _HomePageState extends State<HomePage> {
 
     int jumlahPresensi = 0;
 
-
-
     for (final presensi in riwayat) {
-
       final tanggalPresensi = parseTanggal(presensi.tanggal);
 
       final formattedTanggalPresensi = konversiKeFormatTeks(tanggalPresensi);
@@ -71,7 +69,8 @@ class _HomePageState extends State<HomePage> {
 
     return jumlahPresensi;
   }
-    int totalPresensi = 0;
+
+  int totalPresensi = 0;
 
   @override
   void initState() {
@@ -88,133 +87,130 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future getData() async {
-  final Map<String, String> headers = {
-    'Authorization': 'Bearer ' + await _token
-  };
+    final Map<String, String> headers = {'Authorization': 'Bearer ' + await _token};
 
-  // Mendapatkan data dari API
-  final homeResponse = await myHttp.get(
-    Uri.parse('http://10.0.2.2:8000/api/get-presensi'),
-    headers: headers,
-  );
+    // Mendapatkan data dari API
+    final homeResponse = await myHttp.get(
+      Uri.parse('http://10.0.2.2:8000/api/get-presensi'),
+      headers: headers,
+    );
 
-  final presensiResponse = await myHttp.get(
-    Uri.parse('http://10.0.2.2:8000/api/get-total-presensi'),
-    headers: headers,
-  );
+    final presensiResponse = await myHttp.get(
+      Uri.parse('http://10.0.2.2:8000/api/get-total-presensi'),
+      headers: headers,
+    );
 
-  print("Response dari server (Home): " + homeResponse.body);
-  print("Response dari server (Presensi): " + presensiResponse.body);
+    print("Response dari server (Home): " + homeResponse.body);
+    print("Response dari server (Presensi): " + presensiResponse.body);
 
-  final homeResponseModel = HomeResponseModel.fromJson(json.decode(homeResponse.body));
-  final presensiResponseModel = PresensiResponModel.fromJson(json.decode(presensiResponse.body));
+    final homeResponseModel = HomeResponseModel.fromJson(json.decode(homeResponse.body));
+    final presensiResponseModel = PresensiResponModel.fromJson(json.decode(presensiResponse.body));
 
-  setState(() {
-    totalPresensi = presensiResponseModel.totalPresensi!;
-    riwayat.clear();
-    homeResponseModel.data.forEach((element) {
-      if (element.isHariIni) {
-        hariIni = element;
-      } else {
-        riwayat.add(element);
-      }
+    setState(() {
+      totalPresensi = presensiResponseModel.totalPresensi!;
+      riwayat.clear();
+      homeResponseModel.data.forEach((element) {
+        if (element.isHariIni) {
+          hariIni = element;
+        } else {
+          riwayat.add(element);
+        }
+      });
     });
-  });
-}
-
+  }
 
   Widget buildNameFutureBuilder(Future<String> future) {
-      return FutureBuilder(
-        future: future,
-        builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator();
+    return FutureBuilder(
+      future: future,
+      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        } else {
+          if (snapshot.hasData) {
+            return Text(
+              snapshot.data!,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            );
           } else {
-            if (snapshot.hasData) {
-              return Text(
-                snapshot.data!,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              );
-            } else {
-              return const Text(
-                "-",
-                style: TextStyle(fontSize: 18),
-              );
-            }
+            return const Text(
+              "-",
+              style: TextStyle(fontSize: 18),
+            );
           }
-        },
+        }
+      },
+    );
+  }
+
+  Widget buildHariIniFutureBuilder(Datum? hariIni) {
+    if (hariIni == null) {
+      return const Text(
+        "-",
+        style: TextStyle(fontSize: 18, color: Colors.white),
+      );
+    } else {
+      return Text(
+        hariIni.tanggal,
+        style: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
       );
     }
+  }
 
-    Widget buildHariIniFutureBuilder(Datum? hariIni) {
-      if (hariIni == null) {
-        return const Text(
-          "-",
-          style: TextStyle(fontSize: 18, color: Colors.white),
-        );
-      } else {
-        return Text(
-          hariIni.tanggal,
+  Widget MasukWidget() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(
+          hariIni?.masuk ?? '-',
           style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
             color: Colors.white,
-          ),
-        );
-      }
-    }
-
-    Widget MasukWidget() {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            hariIni?.masuk ?? '-',
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
           ),
         ),
-      );
-    }
+      ),
+    );
+  }
 
-    Widget PulangWidget() {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            hariIni?.pulang ?? '-',
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
+  Widget PulangWidget() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(
+          hariIni?.pulang ?? '-',
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
           ),
         ),
-      );
+      ),
+    );
+  }
+
+  String _getGreeting() {
+    final hour = DateTime.now().hour;
+    String greeting = '';
+
+    if (hour < 12) {
+      greeting = 'Pagi';
+    } else if (hour < 15) {
+      greeting = 'Siang';
+    } else if (hour < 18) {
+      greeting = 'Sore';
+    } else {
+      greeting = 'Malam';
     }
 
-    String _getGreeting() {
-      final hour = DateTime.now().hour;
-      String greeting = '';
-
-      if (hour < 12) {
-        greeting = 'Pagi';
-      } else if (hour < 15) {
-        greeting = 'Siang';
-      } else if (hour < 18) {
-        greeting = 'Sore';
-      } else {
-        greeting = 'Malam';
-      }
-
-      return greeting;
-    }
+    return greeting;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -388,49 +384,31 @@ class _HomePageState extends State<HomePage> {
                                                   height: 15,
                                                   child: FutureBuilder<String>(
                                                     future: _name,
-                                                    builder: (BuildContext
-                                                            context,
-                                                        AsyncSnapshot<String>
-                                                            snapshot) {
-                                                      if (snapshot
-                                                              .connectionState ==
-                                                          ConnectionState
-                                                              .waiting) {
+                                                    builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                                                      if (snapshot.connectionState == ConnectionState.waiting) {
                                                         return const CircularProgressIndicator();
-                                                      } else if (snapshot
-                                                          .hasError) {
-                                                        return Text(
-                                                            "Error: ${snapshot.error}");
-                                                      } else if (snapshot
-                                                          .hasData) {
-                                                        final nama =
-                                                            snapshot.data!;
+                                                      } else if (snapshot.hasError) {
+                                                        return Text("Error: ${snapshot.error}");
+                                                      } else if (snapshot.hasData) {
+                                                        final nama = snapshot.data!;
                                                         return Marquee(
-                                                          text:
-                                                              "SELAMAT ${_getGreeting().toUpperCase()} ${nama.toUpperCase()}, SEMANGAT KERJANYA | ",
-                                                          startAfter:
-                                                              const Duration(
-                                                                  seconds: 3),
+                                                          text: "SELAMAT ${_getGreeting().toUpperCase()} ${nama.toUpperCase()}, SEMANGAT KERJANYA | ",
+                                                          startAfter: const Duration(seconds: 3),
                                                           velocity: 25,
-                                                          style:
-                                                              const TextStyle(
-                                                                  color: Colors
-                                                                      .white),
+                                                          style: const TextStyle(color: Colors.white),
                                                         );
                                                       } else {
-                                                        return const Text(
-                                                            "Tidak ada data");
+                                                        return const Text("Tidak ada data");
                                                       }
                                                     },
                                                   ),
                                                 )
                                               else
-                                                const Text(
-                                                    ""), // Widget kosong jika masuk adalah null
+                                                const Text(""), // Widget kosong jika masuk adalah null
                                               Row(
                                                 children: [
                                                   Padding(
-                                                    padding: EdgeInsets.only(right: 5),
+                                                    padding: const EdgeInsets.only(right: 5),
                                                     child: Card(
                                                       color: hariIni?.masuk != null ? Colors.green : Colors.red,
                                                       child: Icon(
@@ -442,7 +420,7 @@ class _HomePageState extends State<HomePage> {
                                                   ),
                                                   Text(
                                                     hariIni?.masuk != null ? "Berhasil" : "Gagal",
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
                                                       color: Colors.white,
                                                       fontSize: 12,
                                                     ),
@@ -502,8 +480,7 @@ class _HomePageState extends State<HomePage> {
                                           ),
                                         ),
                                         child: Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 12),
+                                          padding: const EdgeInsets.only(left: 12),
                                           child: Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
@@ -513,49 +490,31 @@ class _HomePageState extends State<HomePage> {
                                                   height: 15,
                                                   child: FutureBuilder<String>(
                                                     future: _name,
-                                                    builder: (BuildContext
-                                                            context,
-                                                        AsyncSnapshot<String>
-                                                            snapshot) {
-                                                      if (snapshot
-                                                              .connectionState ==
-                                                          ConnectionState
-                                                              .waiting) {
+                                                    builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                                                      if (snapshot.connectionState == ConnectionState.waiting) {
                                                         return const CircularProgressIndicator();
-                                                      } else if (snapshot
-                                                          .hasError) {
-                                                        return Text(
-                                                            "Error: ${snapshot.error}");
-                                                      } else if (snapshot
-                                                          .hasData) {
-                                                        final nama =
-                                                            snapshot.data!;
+                                                      } else if (snapshot.hasError) {
+                                                        return Text("Error: ${snapshot.error}");
+                                                      } else if (snapshot.hasData) {
+                                                        final nama = snapshot.data!;
                                                         return Marquee(
-                                                          text:
-                                                              "SELAMAT ${_getGreeting().toUpperCase()} ${nama.toUpperCase()}, SAMPAI JUMPA BESOK | ",
-                                                          startAfter:
-                                                              const Duration(
-                                                                  seconds: 3),
+                                                          text: "SELAMAT ${_getGreeting().toUpperCase()} ${nama.toUpperCase()}, SAMPAI JUMPA BESOK | ",
+                                                          startAfter: const Duration(seconds: 3),
                                                           velocity: 25,
-                                                          style:
-                                                              const TextStyle(
-                                                                  color: Colors
-                                                                      .white),
+                                                          style: const TextStyle(color: Colors.white),
                                                         );
                                                       } else {
-                                                        return const Text(
-                                                            "Tidak ada data");
+                                                        return const Text("Tidak ada data");
                                                       }
                                                     },
                                                   ),
                                                 )
                                               else
-                                                const Text(
-                                                    ""), // Widget kosong jika masuk adalah null
+                                                const Text(""), // Widget kosong jika masuk adalah null
                                               Row(
                                                 children: [
                                                   Padding(
-                                                    padding: EdgeInsets.only(right: 5),
+                                                    padding: const EdgeInsets.only(right: 5),
                                                     child: Card(
                                                       color: hariIni?.pulang != null ? Colors.green : Colors.red,
                                                       child: Icon(
@@ -567,7 +526,7 @@ class _HomePageState extends State<HomePage> {
                                                   ),
                                                   Text(
                                                     hariIni?.pulang != null ? "Berhasil" : "Gagal",
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
                                                       color: Colors.white,
                                                       fontSize: 12,
                                                     ),
@@ -589,21 +548,47 @@ class _HomePageState extends State<HomePage> {
                     ),
                     const SizedBox(height: 20),
                     const Text("Riwayat Presensi"),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => AllRiwayat()),
+                        );
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.only(right: 10.0, top: 10.0),
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: Text(
+                            'Lihat Semua',
+                            style: TextStyle(fontSize: 12.0, color: Colors.black45),
+                          ),
+                        ),
+                      ),
+                    ),
                     Expanded(
                       child: ListView.builder(
                         itemCount: riwayat.length,
                         itemBuilder: (context, index) => Card(
                           child: ListTile(
                             leading: Text(riwayat[index].tanggal),
-                            title: Row(children: [
-                              Column(
-                                children: [Text(riwayat[index].masuk, style: const TextStyle(fontSize: 18)), const Text("Masuk", style: TextStyle(fontSize: 14))],
-                              ),
-                              const SizedBox(width: 20),
-                              Column(
-                                children: [Text(riwayat[index].pulang, style: const TextStyle(fontSize: 18)), const Text("Pulang", style: TextStyle(fontSize: 14))],
-                              ),
-                            ]),
+                            title: Row(
+                              children: [
+                                Column(
+                                  children: [
+                                    Text(riwayat[index].masuk ?? '-', style: const TextStyle(fontSize: 18)),
+                                    const Text("Masuk", style: TextStyle(fontSize: 14)),
+                                  ],
+                                ),
+                                const SizedBox(width: 20),
+                                Column(
+                                  children: [
+                                    Text(riwayat[index].pulang ?? '-', style: const TextStyle(fontSize: 18)),
+                                    const Text("Pulang", style: TextStyle(fontSize: 14)),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -616,31 +601,3 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-
-// void _showDetailModal(BuildContext context, RiwayatItem item) {
-//   showDialog(
-//     context: context,
-//     builder: (BuildContext context) {
-//       return AlertDialog(
-//         title: Text("Detail Riwayat"),
-//         content: Column(
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: [
-//             Text("Tanggal: ${item.tanggal}"),
-//             Text("Masuk: ${item.masuk}"),
-//             Text("Pulang: ${item.pulang}"),
-//           ],
-//         ),
-//         actions: [
-//           TextButton(
-//             onPressed: () {
-//               Navigator.of(context).pop();
-//             },
-//             child: Text("Tutup"),
-//           ),
-//         ],
-//       );
-//     },
-//   );
-// }
-

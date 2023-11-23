@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TellAdmin extends StatefulWidget {
   const TellAdmin({super.key});
@@ -8,6 +9,24 @@ class TellAdmin extends StatefulWidget {
 }
 
 class _TellAdminState extends State<TellAdmin> {
+  TextEditingController emailController = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    // Call the method to retrieve the user's email when the widget initializes.
+    getUserEmail();
+  }
+
+  // Method to retrieve the user's email from shared preferences.
+  Future<void> getUserEmail() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String userEmail = prefs.getString("email") ?? "";
+    setState(() {
+      // Set the initial value of the email TextField.
+      emailController.text = userEmail;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,7 +49,7 @@ class _TellAdminState extends State<TellAdmin> {
             ),
             SizedBox(height: 20),
             Text(
-              "Enter your email address and we'll send you a link to reset your password.",
+              "Kirimkan request maka kami akan mengirimkan passwordnya",
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 20),

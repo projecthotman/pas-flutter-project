@@ -555,7 +555,7 @@ class _HomePageState extends State<HomePage> {
                               ),
                               const SizedBox(width: 20),
                               Column(
-                                children: [Text(riwayat[index].pulang, style: const TextStyle(fontSize: 18)), const Text("Pulang", style: TextStyle(fontSize: 14))],
+                                children: [Text(riwayat[index].pulang ?? "--", style: const TextStyle(fontSize: 18)), const Text("Pulang", style: TextStyle(fontSize: 14))],
                               ),
                             ]),
                           ),

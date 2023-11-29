@@ -9,7 +9,6 @@ import 'tabbar/master.dart';
 
 import 'dart:math' as math;
 
-
 import 'map.dart';
 
 class SimpanPage extends StatefulWidget {
@@ -24,12 +23,18 @@ class _SimpanPageState extends State<SimpanPage> {
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   late Future<String> _token;
 
+  late MapZoomPanBehavior _zoomPanBehavior;
+
   @override
   void initState() {
     super.initState();
     _token = _prefs.then((SharedPreferences prefs) {
       return prefs.getString("token") ?? "";
     });
+    _zoomPanBehavior = MapZoomPanBehavior(
+      enableDoubleTapZooming: true,
+      zoomLevel: 15, // Sesuaikan dengan level yang diinginkan
+    );
   }
 
   Future<LocationData?> _currenctLocation() async {
@@ -109,6 +114,10 @@ class _SimpanPageState extends State<SimpanPage> {
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
             if (snapshot.hasData) {
               final LocationData currentLocation = snapshot.data;
+              MapLatLng location = MapLatLng(
+                currentLocation.latitude!,
+                currentLocation.longitude!,
+              );
               // ignore: avoid_print
               print("Lokasi Anda : ${currentLocation.latitude} | ${currentLocation.longitude}");
               return SafeArea(
@@ -120,12 +129,20 @@ class _SimpanPageState extends State<SimpanPage> {
                         child: SfMaps(
                           layers: <MapLayer>[
                             MapTileLayer(
-                              initialFocalLatLng: MapLatLng(
-                                currentLocation.latitude!,
-                                currentLocation.longitude!,
-                              ),
-                              initialZoomLevel: 15,
-                              urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                              initialFocalLatLng: location,
+                              urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                              zoomPanBehavior: _zoomPanBehavior,
+                              markerBuilder: (BuildContext context, int index) {
+                                return MapMarker(
+                                  latitude: location.latitude,
+                                  longitude: location.longitude,
+                                  child: const Icon(
+                                    Icons.location_on,
+                                    color: Colors.red,
+                                    size: 100,
+                                  ),
+                                );
+                              },
                             ),
                           ],
                         )),
@@ -164,7 +181,7 @@ class _SimpanPageState extends State<SimpanPage> {
                                           double centerLongitude = 110.30832545032034;
 
                                           // Jarak maksimal yang diterima sebagai bagian dari wilayah (misalnya 0.1 derajat)
-                                          double maxDistance = 0.3;
+                                          double maxDistance = 300;
 
                                           // Menghitung jarak antara dua titik menggunakan Haversine formula
                                           double distance = _calculateHaversineDistance(
@@ -214,8 +231,12 @@ class _SimpanPageState extends State<SimpanPage> {
                             ),
                             child: const Text("Simpan Presensi"),
                           ),
-                          const SizedBox(height: 10),
-                          ElevatedButton(onPressed: (){ToMap2(context);}, child: const Text("Peta2"))
+                          // const SizedBox(height: 10),
+                          // ElevatedButton(
+                          //     onPressed: () {
+                          //       ToMap2(context);
+                          //     },
+                          //     child: const Text("Peta2"))
                         ],
                       ),
                     ),
@@ -232,10 +253,10 @@ class _SimpanPageState extends State<SimpanPage> {
   }
 }
 
-void ToMap2(BuildContext context) {
-  // Gunakan Navigator untuk berpindah ke halaman Map2
-  Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => Map2()),
-  );
-}
+// void ToMap2(BuildContext context) {
+//   // Gunakan Navigator untuk berpindah ke halaman Map2
+//   Navigator.push(
+//     context,
+//     MaterialPageRoute(builder: (context) => Map2()),
+//   );
+// }

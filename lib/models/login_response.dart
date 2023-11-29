@@ -56,16 +56,17 @@ class Data {
   String token;
   String tokenType;
 
-  factory Data.fromJson(Map<String, dynamic> json) => Data(
+ factory Data.fromJson(Map<String, dynamic> json) => Data(
         id: json["id"],
         name: json["name"],
         email: json["email"],
         emailVerifiedAt: json["email_verified_at"],
-        createdAt: DateTime.parse(json["created_at"]),
-        updatedAt: DateTime.parse(json["updated_at"]),
+        createdAt: json["created_at"] != null ? DateTime.parse(json["created_at"]) : DateTime.now(),
+        updatedAt: json["updated_at"] != null ? DateTime.parse(json["updated_at"]) : DateTime.now(),
         token: json["token"],
         tokenType: json["token_type"],
       );
+
 
   Map<String, dynamic> toJson() => {
         "id": id,

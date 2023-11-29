@@ -60,8 +60,6 @@ class _HomePageState extends State<HomePage> {
     for (final presensi in riwayat) {
       final tanggalPresensi = parseTanggal(presensi.tanggal);
 
-      final formattedTanggalPresensi = konversiKeFormatTeks(tanggalPresensi);
-
       if (tanggalPresensi.month == bulanIni && tanggalPresensi.year == tahunIni) {
         jumlahPresensi++;
       }
@@ -74,7 +72,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _token = _prefs.then((SharedPreferences prefs) {
       return prefs.getString("token") ?? "";
@@ -83,10 +80,13 @@ class _HomePageState extends State<HomePage> {
     _name = _prefs.then((SharedPreferences prefs) {
       return prefs.getString("name") ?? "";
     });
+
+    // Panggil getData() di sini untuk memuat data awal
     getData();
   }
 
   Future getData() async {
+
     final Map<String, String> headers = {'Authorization': 'Bearer ' + await _token};
 
     // Mendapatkan data dari API
@@ -108,6 +108,7 @@ class _HomePageState extends State<HomePage> {
 
     setState(() {
       totalPresensi = presensiResponseModel.totalPresensi!;
+
       riwayat.clear();
       homeResponseModel.data.forEach((element) {
         if (element.isHariIni) {

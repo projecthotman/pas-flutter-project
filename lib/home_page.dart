@@ -2,14 +2,14 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:marquee/marquee.dart';
-import 'package:project/models/home-response.dart';
+import 'package:project/models/home_response.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as myHttp;
+import 'package:http/http.dart' as my_http;
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:intl/intl.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -87,22 +87,20 @@ class _HomePageState extends State<HomePage> {
   Future getData() async {
     // Memindahkan kode untuk mengambil data ke sini
     final Map<String, String> headers = {
-      'Authorization': 'Bearer ' + await _token,
+      'Authorization' : 'Bearer ${await _token}',
+      'Content-Type': 'application/json',
     };
 
     // Mendapatkan data dari API
-    final homeResponse = await myHttp.get(
+    final homeResponse = await my_http.get(
       Uri.parse('http://10.0.2.2:8000/api/get-presensi'),
       headers: headers,
     );
 
-    final presensiResponse = await myHttp.get(
+    final presensiResponse = await my_http.get(
       Uri.parse('http://10.0.2.2:8000/api/get-total-presensi'),
       headers: headers,
     );
-
-    print("Response dari server (Home): " + homeResponse.body);
-    print("Response dari server (Presensi): " + presensiResponse.body);
 
     final homeResponseModel = HomeResponseModel.fromJson(json.decode(homeResponse.body));
     final presensiResponseModel = PresensiResponModel.fromJson(json.decode(presensiResponse.body));
@@ -110,13 +108,13 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       totalPresensi = presensiResponseModel.totalPresensi;
       riwayat.clear();
-      homeResponseModel.data.forEach((element) {
+      for (var element in homeResponseModel.data) {
         if (element.isHariIni) {
           hariIni = element;
         } else {
           riwayat.add(element);
         }
-      });
+      }
     });
   }
 
@@ -164,7 +162,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Widget MasukWidget() {
+  Widget masukWidget() {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -180,7 +178,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget PulangWidget() {
+  Widget pulangWidget() {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -230,92 +228,88 @@ class _HomePageState extends State<HomePage> {
                     const SizedBox(
                       height: 16,
                     ),
-                    Container(
-                      child: Row(
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start, // Agar teks sejajar kiri
-                            children: <Widget>[
-                              Row(
-                                children: [
-                                  Text(
-                                    "Selamat ${_getGreeting()} !",
-                                    style: const TextStyle(
-                                      fontSize: 15,
-                                    ),
+                    Row(
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start, // Agar teks sejajar kiri
+                          children: <Widget>[
+                            Row(
+                              children: [
+                                Text(
+                                  "Selamat ${_getGreeting()} !",
+                                  style: const TextStyle(
+                                    fontSize: 15,
                                   ),
-                                  const SizedBox(width: 8),
-                                  const Icon(
-                                    Icons.waving_hand,
-                                    color: Colors.amber,
-                                    size: 18,
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 10),
-                              buildNameFutureBuilder(_name),
-                            ],
-                          ),
-                          const Spacer(),
-                          const Card(
-                            child: Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Icon(
-                                Icons.notifications,
-                                color: Colors.black, // Ubah warna ikon notifikasi sesuai preferensi Anda
-                              ),
+                                ),
+                                const SizedBox(width: 8),
+                                const Icon(
+                                  Icons.waving_hand,
+                                  color: Colors.amber,
+                                  size: 18,
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+                            buildNameFutureBuilder(_name),
+                          ],
+                        ),
+                        const Spacer(),
+                        const Card(
+                          child: Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Icon(
+                              Icons.notifications,
+                              color: Colors.black, // Ubah warna ikon notifikasi sesuai preferensi Anda
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                     const SizedBox(
                       height: 40,
                     ),
-                    Container(
-                      child: Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8),
-                          child: Row(
-                            children: [
-                              CircularPercentIndicator(
-                                radius: 30,
-                                lineWidth: 8,
-                                percent: (hitungJumlahPresensi(riwayat) / 20).clamp(0.0, 1.0),
-                                progressColor: const Color(0xFF688E4E),
-                                backgroundColor: Colors.blue.shade100,
-                                circularStrokeCap: CircularStrokeCap.round,
-                                center: Text('${(hitungJumlahPresensi(riwayat) / 20 * 100).toStringAsFixed(0)}%', style: const TextStyle(fontSize: 16)),
-                              ),
-                              const SizedBox(width: 16),
-                              const Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "Kehadiranmu sebulan ini",
-                                    style: TextStyle(
-                                      fontSize: 18,
+                    Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: Row(
+                          children: [
+                            CircularPercentIndicator(
+                              radius: 30,
+                              lineWidth: 8,
+                              percent: (hitungJumlahPresensi(riwayat) / 20).clamp(0.0, 1.0),
+                              progressColor: const Color(0xFF688E4E),
+                              backgroundColor: Colors.blue.shade100,
+                              circularStrokeCap: CircularStrokeCap.round,
+                              center: Text('${(hitungJumlahPresensi(riwayat) / 20 * 100).toStringAsFixed(0)}%', style: const TextStyle(fontSize: 16)),
+                            ),
+                            const SizedBox(width: 16),
+                            const Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Kehadiranmu sebulan ini",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                  ),
+                                ),
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.keyboard_arrow_up,
+                                      size: 18,
                                     ),
-                                  ),
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        Icons.keyboard_arrow_up,
-                                        size: 18,
+                                    SizedBox(width: 4),
+                                    Text(
+                                      "meningkat 5% dari bulan lalu",
+                                      style: TextStyle(
+                                        fontSize: 12,
                                       ),
-                                      SizedBox(width: 4),
-                                      Text(
-                                        "meningkat 5% dari bulan lalu",
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -358,7 +352,7 @@ class _HomePageState extends State<HomePage> {
                                             ),
                                           ),
                                         ),
-                                        child: MasukWidget(),
+                                        child: masukWidget(),
                                       ),
                                     ),
                                   ),
@@ -380,7 +374,7 @@ class _HomePageState extends State<HomePage> {
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               if (hariIni?.masuk != null)
-                                                Container(
+                                                SizedBox(
                                                   width: double.infinity,
                                                   height: 15,
                                                   child: FutureBuilder<String>(
@@ -409,7 +403,7 @@ class _HomePageState extends State<HomePage> {
                                               Row(
                                                 children: [
                                                   Padding(
-                                                    padding: EdgeInsets.only(right: 5),
+                                                    padding:const EdgeInsets.only(right: 5),
                                                     child: Card(
                                                       color: hariIni?.masuk != null ? Colors.green : Colors.red,
                                                       child: Icon(
@@ -420,8 +414,8 @@ class _HomePageState extends State<HomePage> {
                                                     ),
                                                   ),
                                                   Text(
-                                                    hariIni?.masuk != null ? "Berhasil" : "Gagal",
-                                                    style: TextStyle(
+                                                    hariIni?.masuk != null ? "Berhasil" : "Belum Presensi",
+                                                    style:const TextStyle(
                                                       color: Colors.white,
                                                       fontSize: 12,
                                                     ),
@@ -462,7 +456,7 @@ class _HomePageState extends State<HomePage> {
                                         child: Center(
                                           child: Padding(
                                             padding: const EdgeInsets.all(8.0),
-                                            child: PulangWidget(),
+                                            child: pulangWidget(),
                                           ),
                                         ),
                                       ),
@@ -486,7 +480,7 @@ class _HomePageState extends State<HomePage> {
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               if (hariIni?.pulang != null)
-                                                Container(
+                                                SizedBox(
                                                   width: double.infinity,
                                                   height: 15,
                                                   child: FutureBuilder<String>(
@@ -515,7 +509,7 @@ class _HomePageState extends State<HomePage> {
                                               Row(
                                                 children: [
                                                   Padding(
-                                                    padding: EdgeInsets.only(right: 5),
+                                                    padding:const EdgeInsets.only(right: 5),
                                                     child: Card(
                                                       color: hariIni?.pulang != null ? Colors.green : Colors.red,
                                                       child: Icon(
@@ -526,8 +520,8 @@ class _HomePageState extends State<HomePage> {
                                                     ),
                                                   ),
                                                   Text(
-                                                    hariIni?.pulang != null ? "Berhasil" : "Gagal",
-                                                    style: TextStyle(
+                                                    hariIni?.pulang != null ? "Berhasil" : "Belum Presensi",
+                                                    style:const TextStyle(
                                                       color: Colors.white,
                                                       fontSize: 12,
                                                     ),

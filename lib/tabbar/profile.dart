@@ -1,15 +1,11 @@
-
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as myHttp;
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:project/loginPage.dart';
-import 'package:project/tabbar/master.dart';
+import 'package:project/login_page.dart';
+// import 'package:project/tabbar/master.dart';
 
-import '../models/home-response.dart';
-import '../models/login-response.dart';
+import '../models/home_response.dart';
+import '../models/login_response.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -18,30 +14,25 @@ class ProfilePage extends StatefulWidget {
   State<ProfilePage> createState() => _ProfilePageState();
 }
 
-  Future<void> logout(BuildContext context, SharedPreferences prefs) async {
+Future<void> logout(BuildContext context, SharedPreferences prefs) async {
   prefs.remove("token");
   Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const LoginPage()));
 }
 
-
 class _ProfilePageState extends State<ProfilePage> {
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
-  late Future<String> _name, _token, _email;
+  late Future<String> _name, _email;
   LoginResponseModel? loginResponseModel;
   HomeResponseModel? homeResponseModel;
   Future<void> logout(BuildContext context, SharedPreferences prefs) async {
     prefs.remove("token");
-    Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const LoginPage()));
+    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const LoginPage()));
   }
 
+  @override
   void initState() {
     super.initState();
-    _token = _prefs.then((SharedPreferences prefs) {
-      return prefs.getString("token") ?? "";
-    });
-
     _name = _prefs.then((SharedPreferences prefs) {
       return prefs.getString("name") ?? "";
     });
@@ -51,28 +42,7 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
-  Future getData() async {
-    final Map<String, String> headers = {
-      'Authorization': 'Bearer ' + await _token
-    };
-    var response = await myHttp.get(
-        Uri.parse('https://cek-wa.com/presensi/public/api/get-presensi'),
-        headers: headers);
-    print("Response dari server: " + response.body);
-    loginResponseModel =
-        LoginResponseModel.fromJson(json.decode(response.body));
-
-    // Pastikan bahwa data telah dimuat dengan benar
-    if (loginResponseModel != null && loginResponseModel!.data != null) {
-      final userEmail = loginResponseModel!.data!.email;
-      // Simpan email ke dalam _email
-      setState(() {
-        _email = Future.value(userEmail);
-      });
-    }
-  }
-
-  Widget buildNameFutureBuilder(Future<String> future) {
+ Widget buildNameFutureBuilder(Future<String> future) {
     return FutureBuilder(
       future: future,
       builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
@@ -97,8 +67,7 @@ class _ProfilePageState extends State<ProfilePage> {
       },
     );
   }
-
-  Widget buildEmailFutureBuilder(Future<String> future) {
+ Widget buildEmailFutureBuilder(Future<String> future) {
     return FutureBuilder(
       future: future,
       builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
@@ -123,7 +92,6 @@ class _ProfilePageState extends State<ProfilePage> {
       },
     );
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -149,8 +117,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     child: const Center(
                       child: CircleAvatar(
                         radius: 60,
-                        backgroundImage:
-                            ExactAssetImage('assets/img/profile.png'),
+                        backgroundImage: ExactAssetImage('assets/img/profile.png'),
                       ),
                     ),
                   ),
@@ -161,11 +128,14 @@ class _ProfilePageState extends State<ProfilePage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       buildNameFutureBuilder(_name),
-                      SizedBox(
+                      const SizedBox(
                         height: 14,
                       ),
-                      buildEmailFutureBuilder(
-                          _email), // Menampilkan email pengguna
+                      buildEmailFutureBuilder(_email),
+                      const SizedBox(
+                        height: 14,
+                      ),
+                      
                     ],
                   )
                 ],
@@ -181,15 +151,15 @@ class _ProfilePageState extends State<ProfilePage> {
             const SizedBox(
               height: 10,
             ),
-            Container(
+            SizedBox(
               width: 350,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  
                   InkWell(
                     onTap: () async {
                       final prefs = await SharedPreferences.getInstance();
+                      // ignore: use_build_context_synchronously
                       await logout(context, prefs);
                     },
                     child: const ListTile(

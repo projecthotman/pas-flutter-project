@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'profile.dart' as profile;
-import 'package:project/simpanPage.dart' as simpanpage;
-import 'package:project/homePage.dart' as homepage;
+import 'package:project/simpan_page.dart' as simpanpage;
+import 'package:project/home_page.dart' as homepage;
 
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 
@@ -47,12 +47,13 @@ class _MasterTabbarState extends State<MasterTabbar> {
     return Scaffold(
       body: PageView(
         controller: pageController,
-        children: <Widget>[
-          const homepage.HomePage(),
-          const simpanpage.SimpanPage(),
+        onPageChanged: onPageChanged,
+        children:const <Widget>[
+          homepage.HomePage(),
+          simpanpage.SimpanPage(),
           profile.ProfilePage(),
         ],
-        onPageChanged: onPageChanged,
+        
       ),
       bottomNavigationBar: CurvedNavigationBar(
         height: 50,

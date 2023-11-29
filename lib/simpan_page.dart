@@ -232,11 +232,7 @@ class _SimpanPageState extends State<SimpanPage> {
                             child: const Text("Simpan Presensi"),
                           ),
                           // const SizedBox(height: 10),
-                          // ElevatedButton(
-                          //     onPressed: () {
-                          //       ToMap2(context);
-                          //     },
-                          //     child: const Text("Peta2"))
+                          // ElevatedButton(onPressed: (){ToMap2(context);}, child: const Text("Peta2"))
                         ],
                       ),
                     ),

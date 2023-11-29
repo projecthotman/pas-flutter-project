@@ -31,7 +31,7 @@ class _TellAdminState extends State<TellAdmin> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Forgot Password"),
+        title:const Text("Forgot Password"),
         backgroundColor: const Color(0xFF1E232C),
       ),
       body: Padding(
@@ -40,7 +40,7 @@ class _TellAdminState extends State<TellAdmin> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
+            const Text(
               "Forgot your password?",
               style: TextStyle(
                 fontSize: 24,
@@ -52,13 +52,13 @@ class _TellAdminState extends State<TellAdmin> {
               "Kirimkan request maka kami akan mengirimkan passwordnya",
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 20),
-            TextField(
+            const SizedBox(height: 20),
+            const TextField(
               decoration: InputDecoration(
                 labelText: "Email",
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: 20,

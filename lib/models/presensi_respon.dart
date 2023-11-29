@@ -4,9 +4,9 @@
 
 import 'dart:convert';
 
-PresensiResponModel PresensiResponModelFromJson(String str) => PresensiResponModel.fromJson(json.decode(str));
+PresensiResponModel presensiResponModelFromJson(String str) => PresensiResponModel.fromJson(json.decode(str));
 
-String PresensiResponModelToJson(PresensiResponModel data) => json.encode(data.toJson());
+String presensiResponModelToJson(PresensiResponModel data) => json.encode(data.toJson());
 
 class PresensiResponModel {
     bool success;

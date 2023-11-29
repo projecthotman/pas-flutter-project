@@ -1,14 +1,13 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as myHttp;
-// ignore: unused_import
-import 'package:project/homePage.dart';
+import 'package:http/http.dart' as my_http;
 import 'package:project/models/login_response.dart';
 import 'package:project/tabbar/master.dart';
 import 'package:project/telladmin.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
+  // ignore: use_super_parameters
   const LoginPage({Key? key}) : super(key: key);
 
   @override
@@ -49,25 +48,33 @@ class _LoginPageState extends State<LoginPage> {
   Future login(email, password) async {
     LoginResponseModel? loginResponseModel;
     Map<String, String> body = {"email": email, "password": password};
-    var response = await myHttp.post(Uri.parse('http://10.0.2.2:8000/api/login'), body: body);
+    var response = await my_http.post(Uri.parse('http://10.0.2.2:8000/api/login'), body: body);
     if (response.statusCode == 401) {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Email atau password salah")));
     } else {
       loginResponseModel = LoginResponseModel.fromJson(json.decode(response.body));
-      print('HASIL ' + response.body);
-      saveUser(loginResponseModel.data.token, loginResponseModel.data.name);
+      // print('HASIL ' + response.body);
+      // ignore: avoid_print
+      print('HASIL ${response.body}');
+      saveUser(loginResponseModel.data.token, loginResponseModel.data.name, loginResponseModel.data.email);
     }
   }
 
-  Future saveUser(token, name) async {
+  Future saveUser(token, name, email) async {
     try {
       final SharedPreferences pref = await _prefs;
       pref.setString("name", name);
       pref.setString("token", token);
+      pref.setString("email", email);
+      
+
+      // ignore: use_build_context_synchronously
       Navigator.of(context).push(MaterialPageRoute(builder: (context) => const MasterTabbar())).then((value) {
         setState(() {});
       });
     } catch (err) {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err.toString())));
     }
   }
@@ -80,6 +87,7 @@ class _LoginPageState extends State<LoginPage> {
     final size = MediaQuery.of(context).size;
     return Scaffold(
       body: SingleChildScrollView(
+        // ignore: avoid_unnecessary_containers
         child: Container(
           child: Padding(
             padding: const EdgeInsets.all(16.0),

@@ -25,7 +25,20 @@ class _HomePageState extends State<HomePage> {
   bool isLoading = true;
 
   DateTime parseTanggal(String tanggalString) {
-    final bulanList = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+    final bulanList = [
+      'Januari',
+      'Februari',
+      'Maret',
+      'April',
+      'Mei',
+      'Juni',
+      'Juli',
+      'Agustus',
+      'September',
+      'Oktober',
+      'November',
+      'Desember'
+    ];
 
     final parts = tanggalString.split(', ');
     if (parts.length == 2) {
@@ -59,7 +72,8 @@ class _HomePageState extends State<HomePage> {
     for (final presensi in riwayat) {
       final tanggalPresensi = parseTanggal(presensi.tanggal);
 
-      if (tanggalPresensi.month == bulanIni && tanggalPresensi.year == tahunIni) {
+      if (tanggalPresensi.month == bulanIni &&
+          tanggalPresensi.year == tahunIni) {
         jumlahPresensi++;
       }
     }
@@ -87,7 +101,7 @@ class _HomePageState extends State<HomePage> {
   Future getData() async {
     // Memindahkan kode untuk mengambil data ke sini
     final Map<String, String> headers = {
-      'Authorization' : 'Bearer ${await _token}',
+      'Authorization': 'Bearer ${await _token}',
       'Content-Type': 'application/json',
     };
 
@@ -102,8 +116,10 @@ class _HomePageState extends State<HomePage> {
       headers: headers,
     );
 
-    final homeResponseModel = HomeResponseModel.fromJson(json.decode(homeResponse.body));
-    final presensiResponseModel = PresensiResponModel.fromJson(json.decode(presensiResponse.body));
+    final homeResponseModel =
+        HomeResponseModel.fromJson(json.decode(homeResponse.body));
+    final presensiResponseModel =
+        PresensiResponModel.fromJson(json.decode(presensiResponse.body));
 
     setState(() {
       totalPresensi = presensiResponseModel.totalPresensi;
@@ -231,7 +247,8 @@ class _HomePageState extends State<HomePage> {
                     Row(
                       children: [
                         Column(
-                          crossAxisAlignment: CrossAxisAlignment.start, // Agar teks sejajar kiri
+                          crossAxisAlignment: CrossAxisAlignment
+                              .start, // Agar teks sejajar kiri
                           children: <Widget>[
                             Row(
                               children: [
@@ -259,7 +276,8 @@ class _HomePageState extends State<HomePage> {
                             padding: EdgeInsets.all(8.0),
                             child: Icon(
                               Icons.notifications,
-                              color: Colors.black, // Ubah warna ikon notifikasi sesuai preferensi Anda
+                              color: Colors
+                                  .black, // Ubah warna ikon notifikasi sesuai preferensi Anda
                             ),
                           ),
                         ),
@@ -276,11 +294,14 @@ class _HomePageState extends State<HomePage> {
                             CircularPercentIndicator(
                               radius: 30,
                               lineWidth: 8,
-                              percent: (hitungJumlahPresensi(riwayat) / 20).clamp(0.0, 1.0),
+                              percent: (hitungJumlahPresensi(riwayat) / 20)
+                                  .clamp(0.0, 1.0),
                               progressColor: const Color(0xFF688E4E),
                               backgroundColor: Colors.blue.shade100,
                               circularStrokeCap: CircularStrokeCap.round,
-                              center: Text('${(hitungJumlahPresensi(riwayat) / 20 * 100).toStringAsFixed(0)}%', style: const TextStyle(fontSize: 16)),
+                              center: Text(
+                                  '${(hitungJumlahPresensi(riwayat) / 20 * 100).toStringAsFixed(0)}%',
+                                  style: const TextStyle(fontSize: 16)),
                             ),
                             const SizedBox(width: 16),
                             const Column(
@@ -333,7 +354,8 @@ class _HomePageState extends State<HomePage> {
                             const SizedBox(height: 20),
                             Card(
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0), // Sudut Card dibulatkan
+                                borderRadius: BorderRadius.circular(
+                                    8.0), // Sudut Card dibulatkan
                               ),
                               color: const Color(0xFF688E4E),
                               child: Row(
@@ -347,7 +369,8 @@ class _HomePageState extends State<HomePage> {
                                           color: Color(0xFF688E4E),
                                           border: Border(
                                             right: BorderSide(
-                                              color: Colors.white, // Warna border kanan
+                                              color: Colors
+                                                  .white, // Warna border kanan
                                               width: 2.0, // Lebar border kanan
                                             ),
                                           ),
@@ -369,9 +392,11 @@ class _HomePageState extends State<HomePage> {
                                           ),
                                         ),
                                         child: Padding(
-                                          padding: const EdgeInsets.only(left: 12),
+                                          padding:
+                                              const EdgeInsets.only(left: 12),
                                           child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
                                               if (hariIni?.masuk != null)
                                                 SizedBox(
@@ -379,43 +404,70 @@ class _HomePageState extends State<HomePage> {
                                                   height: 15,
                                                   child: FutureBuilder<String>(
                                                     future: _name,
-                                                    builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-                                                      if (snapshot.connectionState == ConnectionState.waiting) {
+                                                    builder: (BuildContext
+                                                            context,
+                                                        AsyncSnapshot<String>
+                                                            snapshot) {
+                                                      if (snapshot
+                                                              .connectionState ==
+                                                          ConnectionState
+                                                              .waiting) {
                                                         return const CircularProgressIndicator();
-                                                      } else if (snapshot.hasError) {
-                                                        return Text("Error: ${snapshot.error}");
-                                                      } else if (snapshot.hasData) {
-                                                        final nama = snapshot.data!;
+                                                      } else if (snapshot
+                                                          .hasError) {
+                                                        return Text(
+                                                            "Error: ${snapshot.error}");
+                                                      } else if (snapshot
+                                                          .hasData) {
+                                                        final nama =
+                                                            snapshot.data!;
                                                         return Marquee(
-                                                          text: "SELAMAT ${_getGreeting().toUpperCase()} ${nama.toUpperCase()}, SEMANGAT KERJANYA | ",
-                                                          startAfter: const Duration(seconds: 3),
+                                                          text:
+                                                              "SELAMAT ${_getGreeting().toUpperCase()} ${nama.toUpperCase()}, SEMANGAT KERJANYA | ",
+                                                          startAfter:
+                                                              const Duration(
+                                                                  seconds: 3),
                                                           velocity: 25,
-                                                          style: const TextStyle(color: Colors.white),
+                                                          style:
+                                                              const TextStyle(
+                                                                  color: Colors
+                                                                      .white),
                                                         );
                                                       } else {
-                                                        return const Text("Tidak ada data");
+                                                        return const Text(
+                                                            "Tidak ada data");
                                                       }
                                                     },
                                                   ),
                                                 )
                                               else
-                                                const Text(""), // Widget kosong jika masuk adalah null
+                                                const Text(
+                                                    ""), // Widget kosong jika masuk adalah null
                                               Row(
                                                 children: [
                                                   Padding(
-                                                    padding:const EdgeInsets.only(right: 5),
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            right: 5),
                                                     child: Card(
-                                                      color: hariIni?.masuk != null ? Colors.green : Colors.red,
+                                                      color:
+                                                          hariIni?.masuk != null
+                                                              ? Colors.green
+                                                              : Colors.red,
                                                       child: Icon(
-                                                        hariIni?.masuk != null ? Icons.check : Icons.close,
+                                                        hariIni?.masuk != null
+                                                            ? Icons.check
+                                                            : Icons.close,
                                                         color: Colors.white,
                                                         size: 20,
                                                       ),
                                                     ),
                                                   ),
                                                   Text(
-                                                    hariIni?.masuk != null ? "Berhasil" : "Belum Presensi",
-                                                    style:const TextStyle(
+                                                    hariIni?.masuk != null
+                                                        ? "Berhasil"
+                                                        : "Belum Presensi",
+                                                    style: const TextStyle(
                                                       color: Colors.white,
                                                       fontSize: 12,
                                                     ),
@@ -434,7 +486,8 @@ class _HomePageState extends State<HomePage> {
                             const SizedBox(height: 20),
                             Card(
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0), // Sudut Card dibulatkan
+                                borderRadius: BorderRadius.circular(
+                                    8.0), // Sudut Card dibulatkan
                               ),
                               color: const Color(0xFF688E4E),
                               child: Row(
@@ -448,7 +501,8 @@ class _HomePageState extends State<HomePage> {
                                           color: Color(0xFF688E4E),
                                           border: Border(
                                             right: BorderSide(
-                                              color: Colors.white, // Warna border kanan
+                                              color: Colors
+                                                  .white, // Warna border kanan
                                               width: 2.0, // Lebar border kanan
                                             ),
                                           ),
@@ -475,9 +529,11 @@ class _HomePageState extends State<HomePage> {
                                           ),
                                         ),
                                         child: Padding(
-                                          padding: const EdgeInsets.only(left: 12),
+                                          padding:
+                                              const EdgeInsets.only(left: 12),
                                           child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
                                               if (hariIni?.pulang != null)
                                                 SizedBox(
@@ -485,43 +541,70 @@ class _HomePageState extends State<HomePage> {
                                                   height: 15,
                                                   child: FutureBuilder<String>(
                                                     future: _name,
-                                                    builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-                                                      if (snapshot.connectionState == ConnectionState.waiting) {
+                                                    builder: (BuildContext
+                                                            context,
+                                                        AsyncSnapshot<String>
+                                                            snapshot) {
+                                                      if (snapshot
+                                                              .connectionState ==
+                                                          ConnectionState
+                                                              .waiting) {
                                                         return const CircularProgressIndicator();
-                                                      } else if (snapshot.hasError) {
-                                                        return Text("Error: ${snapshot.error}");
-                                                      } else if (snapshot.hasData) {
-                                                        final nama = snapshot.data!;
+                                                      } else if (snapshot
+                                                          .hasError) {
+                                                        return Text(
+                                                            "Error: ${snapshot.error}");
+                                                      } else if (snapshot
+                                                          .hasData) {
+                                                        final nama =
+                                                            snapshot.data!;
                                                         return Marquee(
-                                                          text: "SELAMAT ${_getGreeting().toUpperCase()} ${nama.toUpperCase()}, SAMPAI JUMPA BESOK | ",
-                                                          startAfter: const Duration(seconds: 3),
+                                                          text:
+                                                              "SELAMAT ${_getGreeting().toUpperCase()} ${nama.toUpperCase()}, SAMPAI JUMPA BESOK | ",
+                                                          startAfter:
+                                                              const Duration(
+                                                                  seconds: 3),
                                                           velocity: 25,
-                                                          style: const TextStyle(color: Colors.white),
+                                                          style:
+                                                              const TextStyle(
+                                                                  color: Colors
+                                                                      .white),
                                                         );
                                                       } else {
-                                                        return const Text("Tidak ada data");
+                                                        return const Text(
+                                                            "Tidak ada data");
                                                       }
                                                     },
                                                   ),
                                                 )
                                               else
-                                                const Text(""), // Widget kosong jika masuk adalah null
+                                                const Text(
+                                                    ""), // Widget kosong jika masuk adalah null
                                               Row(
                                                 children: [
                                                   Padding(
-                                                    padding:const EdgeInsets.only(right: 5),
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            right: 5),
                                                     child: Card(
-                                                      color: hariIni?.pulang != null ? Colors.green : Colors.red,
+                                                      color: hariIni?.pulang !=
+                                                              null
+                                                          ? Colors.green
+                                                          : Colors.red,
                                                       child: Icon(
-                                                        hariIni?.pulang != null ? Icons.check : Icons.close,
+                                                        hariIni?.pulang != null
+                                                            ? Icons.check
+                                                            : Icons.close,
                                                         color: Colors.white,
                                                         size: 20,
                                                       ),
                                                     ),
                                                   ),
                                                   Text(
-                                                    hariIni?.pulang != null ? "Berhasil" : "Belum Presensi",
-                                                    style:const TextStyle(
+                                                    hariIni?.pulang != null
+                                                        ? "Berhasil"
+                                                        : "Belum Presensi",
+                                                    style: const TextStyle(
                                                       color: Colors.white,
                                                       fontSize: 12,
                                                     ),
@@ -551,11 +634,21 @@ class _HomePageState extends State<HomePage> {
                             leading: Text(riwayat[index].tanggal),
                             title: Row(children: [
                               Column(
-                                children: [Text(riwayat[index].masuk, style: const TextStyle(fontSize: 18)), const Text("Masuk", style: TextStyle(fontSize: 14))],
+                                children: [
+                                  Text(riwayat[index].masuk,
+                                      style: const TextStyle(fontSize: 18)),
+                                  const Text("Masuk",
+                                      style: TextStyle(fontSize: 14))
+                                ],
                               ),
                               const SizedBox(width: 20),
                               Column(
-                                children: [Text(riwayat[index].pulang, style: const TextStyle(fontSize: 18)), const Text("Pulang", style: TextStyle(fontSize: 14))],
+                                children: [
+                                  Text(riwayat[index].pulang,
+                                      style: const TextStyle(fontSize: 18)),
+                                  const Text("Pulang",
+                                      style: TextStyle(fontSize: 14))
+                                ],
                               ),
                             ]),
                           ),

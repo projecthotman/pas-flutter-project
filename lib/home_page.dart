@@ -2,14 +2,16 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:marquee/marquee.dart';
+import 'package:project/all_riwayat.dart';
 import 'package:project/models/home_response.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as my_http;
+import 'package:http/http.dart' as myHttp;
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:intl/intl.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -85,36 +87,37 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future getData() async {
-    // Memindahkan kode untuk mengambil data ke sini
-    final Map<String, String> headers = {
-      'Authorization' : 'Bearer ${await _token}',
-      'Content-Type': 'application/json',
-    };
+
+    final Map<String, String> headers = {'Authorization': 'Bearer ' + await _token};
 
     // Mendapatkan data dari API
-    final homeResponse = await my_http.get(
+    final homeResponse = await myHttp.get(
       Uri.parse('http://10.0.2.2:8000/api/get-presensi'),
       headers: headers,
     );
 
-    final presensiResponse = await my_http.get(
+    final presensiResponse = await myHttp.get(
       Uri.parse('http://10.0.2.2:8000/api/get-total-presensi'),
       headers: headers,
     );
+
+    print("Response dari server (Home): " + homeResponse.body);
+    print("Response dari server (Presensi): " + presensiResponse.body);
 
     final homeResponseModel = HomeResponseModel.fromJson(json.decode(homeResponse.body));
     final presensiResponseModel = PresensiResponModel.fromJson(json.decode(presensiResponse.body));
 
     setState(() {
-      totalPresensi = presensiResponseModel.totalPresensi;
+      totalPresensi = presensiResponseModel.totalPresensi!;
+
       riwayat.clear();
-      for (var element in homeResponseModel.data) {
+      homeResponseModel.data.forEach((element) {
         if (element.isHariIni) {
           hariIni = element;
         } else {
           riwayat.add(element);
         }
-      }
+      });
     });
   }
 
@@ -162,7 +165,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Widget masukWidget() {
+  Widget MasukWidget() {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -178,7 +181,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget pulangWidget() {
+  Widget PulangWidget() {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -228,88 +231,92 @@ class _HomePageState extends State<HomePage> {
                     const SizedBox(
                       height: 16,
                     ),
-                    Row(
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start, // Agar teks sejajar kiri
-                          children: <Widget>[
-                            Row(
-                              children: [
-                                Text(
-                                  "Selamat ${_getGreeting()} !",
-                                  style: const TextStyle(
-                                    fontSize: 15,
+                    Container(
+                      child: Row(
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start, // Agar teks sejajar kiri
+                            children: <Widget>[
+                              Row(
+                                children: [
+                                  Text(
+                                    "Selamat ${_getGreeting()} !",
+                                    style: const TextStyle(
+                                      fontSize: 15,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(width: 8),
-                                const Icon(
-                                  Icons.waving_hand,
-                                  color: Colors.amber,
-                                  size: 18,
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 10),
-                            buildNameFutureBuilder(_name),
-                          ],
-                        ),
-                        const Spacer(),
-                        const Card(
-                          child: Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Icon(
-                              Icons.notifications,
-                              color: Colors.black, // Ubah warna ikon notifikasi sesuai preferensi Anda
+                                  const SizedBox(width: 8),
+                                  const Icon(
+                                    Icons.waving_hand,
+                                    color: Colors.amber,
+                                    size: 18,
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 10),
+                              buildNameFutureBuilder(_name),
+                            ],
+                          ),
+                          const Spacer(),
+                          const Card(
+                            child: Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Icon(
+                                Icons.notifications,
+                                color: Colors.black, // Ubah warna ikon notifikasi sesuai preferensi Anda
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                     const SizedBox(
                       height: 40,
                     ),
-                    Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: Row(
-                          children: [
-                            CircularPercentIndicator(
-                              radius: 30,
-                              lineWidth: 8,
-                              percent: (hitungJumlahPresensi(riwayat) / 20).clamp(0.0, 1.0),
-                              progressColor: const Color(0xFF688E4E),
-                              backgroundColor: Colors.blue.shade100,
-                              circularStrokeCap: CircularStrokeCap.round,
-                              center: Text('${(hitungJumlahPresensi(riwayat) / 20 * 100).toStringAsFixed(0)}%', style: const TextStyle(fontSize: 16)),
-                            ),
-                            const SizedBox(width: 16),
-                            const Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Kehadiranmu sebulan ini",
-                                  style: TextStyle(
-                                    fontSize: 18,
+                    Container(
+                      child: Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: Row(
+                            children: [
+                              CircularPercentIndicator(
+                                radius: 30,
+                                lineWidth: 8,
+                                percent: (hitungJumlahPresensi(riwayat) / 20).clamp(0.0, 1.0),
+                                progressColor: const Color(0xFF688E4E),
+                                backgroundColor: Colors.blue.shade100,
+                                circularStrokeCap: CircularStrokeCap.round,
+                                center: Text('${(hitungJumlahPresensi(riwayat) / 20 * 100).toStringAsFixed(0)}%', style: const TextStyle(fontSize: 16)),
+                              ),
+                              const SizedBox(width: 16),
+                              const Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Kehadiranmu sebulan ini",
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                    ),
                                   ),
-                                ),
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.keyboard_arrow_up,
-                                      size: 18,
-                                    ),
-                                    SizedBox(width: 4),
-                                    Text(
-                                      "meningkat 5% dari bulan lalu",
-                                      style: TextStyle(
-                                        fontSize: 12,
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.keyboard_arrow_up,
+                                        size: 18,
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
+                                      SizedBox(width: 4),
+                                      Text(
+                                        "meningkat 5% dari bulan lalu",
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -352,7 +359,7 @@ class _HomePageState extends State<HomePage> {
                                             ),
                                           ),
                                         ),
-                                        child: masukWidget(),
+                                        child: MasukWidget(),
                                       ),
                                     ),
                                   ),
@@ -374,7 +381,7 @@ class _HomePageState extends State<HomePage> {
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               if (hariIni?.masuk != null)
-                                                SizedBox(
+                                                Container(
                                                   width: double.infinity,
                                                   height: 15,
                                                   child: FutureBuilder<String>(
@@ -403,7 +410,7 @@ class _HomePageState extends State<HomePage> {
                                               Row(
                                                 children: [
                                                   Padding(
-                                                    padding:const EdgeInsets.only(right: 5),
+                                                    padding: const EdgeInsets.only(right: 5),
                                                     child: Card(
                                                       color: hariIni?.masuk != null ? Colors.green : Colors.red,
                                                       child: Icon(
@@ -414,8 +421,8 @@ class _HomePageState extends State<HomePage> {
                                                     ),
                                                   ),
                                                   Text(
-                                                    hariIni?.masuk != null ? "Berhasil" : "Belum Presensi",
-                                                    style:const TextStyle(
+                                                    hariIni?.masuk != null ? "Berhasil" : "Gagal",
+                                                    style: const TextStyle(
                                                       color: Colors.white,
                                                       fontSize: 12,
                                                     ),
@@ -456,7 +463,7 @@ class _HomePageState extends State<HomePage> {
                                         child: Center(
                                           child: Padding(
                                             padding: const EdgeInsets.all(8.0),
-                                            child: pulangWidget(),
+                                            child: PulangWidget(),
                                           ),
                                         ),
                                       ),
@@ -480,7 +487,7 @@ class _HomePageState extends State<HomePage> {
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               if (hariIni?.pulang != null)
-                                                SizedBox(
+                                                Container(
                                                   width: double.infinity,
                                                   height: 15,
                                                   child: FutureBuilder<String>(
@@ -509,7 +516,7 @@ class _HomePageState extends State<HomePage> {
                                               Row(
                                                 children: [
                                                   Padding(
-                                                    padding:const EdgeInsets.only(right: 5),
+                                                    padding: const EdgeInsets.only(right: 5),
                                                     child: Card(
                                                       color: hariIni?.pulang != null ? Colors.green : Colors.red,
                                                       child: Icon(
@@ -520,8 +527,8 @@ class _HomePageState extends State<HomePage> {
                                                     ),
                                                   ),
                                                   Text(
-                                                    hariIni?.pulang != null ? "Berhasil" : "Belum Presensi",
-                                                    style:const TextStyle(
+                                                    hariIni?.pulang != null ? "Berhasil" : "Gagal",
+                                                    style: const TextStyle(
                                                       color: Colors.white,
                                                       fontSize: 12,
                                                     ),
@@ -543,21 +550,47 @@ class _HomePageState extends State<HomePage> {
                     ),
                     const SizedBox(height: 20),
                     const Text("Riwayat Presensi"),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => AllRiwayat()),
+                        );
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.only(right: 10.0, top: 10.0),
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: Text(
+                            'Lihat Semua',
+                            style: TextStyle(fontSize: 12.0, color: Colors.black45),
+                          ),
+                        ),
+                      ),
+                    ),
                     Expanded(
                       child: ListView.builder(
                         itemCount: riwayat.length,
                         itemBuilder: (context, index) => Card(
                           child: ListTile(
                             leading: Text(riwayat[index].tanggal),
-                            title: Row(children: [
-                              Column(
-                                children: [Text(riwayat[index].masuk, style: const TextStyle(fontSize: 18)), const Text("Masuk", style: TextStyle(fontSize: 14))],
-                              ),
-                              const SizedBox(width: 20),
-                              Column(
-                                children: [Text(riwayat[index].pulang, style: const TextStyle(fontSize: 18)), const Text("Pulang", style: TextStyle(fontSize: 14))],
-                              ),
-                            ]),
+                            title: Row(
+                              children: [
+                                Column(
+                                  children: [
+                                    Text(riwayat[index].masuk ?? '-', style: const TextStyle(fontSize: 18)),
+                                    const Text("Masuk", style: TextStyle(fontSize: 14)),
+                                  ],
+                                ),
+                                const SizedBox(width: 20),
+                                Column(
+                                  children: [
+                                    Text(riwayat[index].pulang ?? '-', style: const TextStyle(fontSize: 18)),
+                                    const Text("Pulang", style: TextStyle(fontSize: 14)),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -570,31 +603,3 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-
-// void _showDetailModal(BuildContext context, RiwayatItem item) {
-//   showDialog(
-//     context: context,
-//     builder: (BuildContext context) {
-//       return AlertDialog(
-//         title: Text("Detail Riwayat"),
-//         content: Column(
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: [
-//             Text("Tanggal: ${item.tanggal}"),
-//             Text("Masuk: ${item.masuk}"),
-//             Text("Pulang: ${item.pulang}"),
-//           ],
-//         ),
-//         actions: [
-//           TextButton(
-//             onPressed: () {
-//               Navigator.of(context).pop();
-//             },
-//             child: Text("Tutup"),
-//           ),
-//         ],
-//       );
-//     },
-//   );
-// }
-

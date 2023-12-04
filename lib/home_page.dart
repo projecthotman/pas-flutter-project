@@ -82,7 +82,6 @@ class _HomePageState extends State<HomePage> {
       return prefs.getString("name") ?? "";
     });
 
-    // Panggil getData() di sini untuk memuat data awal
     getData();
   }
 
@@ -108,7 +107,7 @@ class _HomePageState extends State<HomePage> {
     final presensiResponseModel = PresensiResponModel.fromJson(json.decode(presensiResponse.body));
 
     setState(() {
-      totalPresensi = presensiResponseModel.totalPresensi!;
+      totalPresensi = presensiResponseModel.totalPresensi;
 
       riwayat.clear();
       homeResponseModel.data.forEach((element) {

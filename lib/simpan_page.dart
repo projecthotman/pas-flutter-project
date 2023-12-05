@@ -75,7 +75,11 @@ class _SimpanPageState extends State<SimpanPage> {
     double dLat = _degreesToRadians(lat2 - lat1);
     double dLon = _degreesToRadians(lon2 - lon1);
 
-    double a = math.sin(dLat / 2) * math.sin(dLat / 2) + math.cos(_degreesToRadians(lat1)) * math.cos(_degreesToRadians(lat2)) * math.sin(dLon / 2) * math.sin(dLon / 2);
+    double a = math.sin(dLat / 2) * math.sin(dLat / 2) +
+        math.cos(_degreesToRadians(lat1)) *
+            math.cos(_degreesToRadians(lat2)) *
+            math.sin(dLon / 2) *
+            math.sin(dLon / 2);
 
     double c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a));
 
@@ -89,20 +93,30 @@ class _SimpanPageState extends State<SimpanPage> {
 
   Future savePresensi(latitude, longitude) async {
     SavePresensiResponseModel savePresensiResponseModel;
-    Map<String, String> body = {"latitude": latitude.toString(), "longitude": longitude.toString()};
+    Map<String, String> body = {
+      "latitude": latitude.toString(),
+      "longitude": longitude.toString()
+    };
     Map<String, String> headers = {'Authorization': 'Bearer ${await _token}'};
 
-    var response = await my_http.post(Uri.parse("http://10.0.2.2:8000/api/save-presensi"), body: body, headers: headers);
+    var response = await my_http.post(
+        Uri.parse("http://10.0.2.2:8000/api/save-presensi"),
+        body: body,
+        headers: headers);
     // print('Response from server: ${response.body}');
-    savePresensiResponseModel = SavePresensiResponseModel.fromJson(json.decode(response.body));
+    savePresensiResponseModel =
+        SavePresensiResponseModel.fromJson(json.decode(response.body));
     if (savePresensiResponseModel.success) {
       // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Sukses simpan Presensi')));
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Sukses simpan Presensi')));
       // ignore: use_build_context_synchronously
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MasterTabbar()));
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (context) => const MasterTabbar()));
     } else {
       // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Gagal simpan Presensi')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Gagal simpan Presensi')));
     }
   }
 
@@ -118,34 +132,50 @@ class _SimpanPageState extends State<SimpanPage> {
                 currentLocation.latitude!,
                 currentLocation.longitude!,
               );
+
+              MapMarker userMarker = MapMarker(
+            latitude: currentLocation.latitude!,
+            longitude: currentLocation.longitude!,
+            child: Icon(Icons.location_on, color: Colors.red), // Ikon tanda lokasi
+          );
               // ignore: avoid_print
-              print("Lokasi Anda : ${currentLocation.latitude} | ${currentLocation.longitude}");
+              print(
+                  "Lokasi Anda : ${currentLocation.latitude} | ${currentLocation.longitude}");
               return SafeArea(
                   child: Column(
                 children: [
                   Expanded(
                     child: SizedBox(
-                        height: 400,
-                        child: SfMaps(
-                          layers: <MapLayer>[
-                            MapTileLayer(
-                              initialFocalLatLng: location,
-                              urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                              zoomPanBehavior: _zoomPanBehavior,
-                              markerBuilder: (BuildContext context, int index) {
-                                return MapMarker(
-                                  latitude: location.latitude,
-                                  longitude: location.longitude,
-                                  child: const Icon(
-                                    Icons.location_on,
-                                    color: Colors.red,
-                                    size: 100,
+                      height: 400,
+                      child: SfMaps(
+                        layers: <MapLayer>[
+                          MapTileLayer(
+                            initialFocalLatLng: location,
+                            urlTemplate:
+                                'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                            zoomPanBehavior: _zoomPanBehavior,
+                            sublayers: [
+                              MapCircleLayer(
+                                circles: <MapCircle>{
+                                  MapCircle(
+                                    center: MapLatLng(
+                                      location.latitude,
+                                      location.longitude,
+                                    ),
+                                    radius: 100, // Atur radius dalam meter
+                                    color: Colors.blue
+                                        .withOpacity(0.3), // Warna radius
+                                    strokeWidth: 2, // Lebar garis radius
+                                    strokeColor:
+                                        Colors.blue, // Warna garis radius
                                   ),
-                                );
-                              },
-                            ),
-                          ],
-                        )),
+                                },
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                   Container(
                     margin: const EdgeInsets.all(16),
@@ -173,13 +203,18 @@ class _SimpanPageState extends State<SimpanPage> {
                                   children: [
                                     FutureBuilder<LocationData?>(
                                       future: _currenctLocation(),
-                                      builder: (BuildContext context, AsyncSnapshot<LocationData?> snapshot) {
+                                      builder: (BuildContext context,
+                                          AsyncSnapshot<LocationData?>
+                                              snapshot) {
                                         if (snapshot.hasData) {
-                                          final LocationData? currentLocation = snapshot.data;
+                                          final LocationData? currentLocation =
+                                              snapshot.data;
 
                                           // Koordinat 1 di wilayah SMK BN
-                                          double centerLatitude1 = -7.019950742580668;
-                                          double centerLongitude1 = 110.30832545032034;
+                                          double centerLatitude1 =
+                                              -7.019950742580668;
+                                          double centerLongitude1 =
+                                              110.30832545032034;
 
                                           // Koordinat 2 di wilayah Asrama Putra BN
                                           double centerLatitude2 = -7.019471;
@@ -189,10 +224,12 @@ class _SimpanPageState extends State<SimpanPage> {
                                           double centerLatitude3 = -7.0195361;
                                           double centerLongitude3 = 110.3084811;
 
-                                          double threshold = 0.1; // Nilai ambang batas dalam kilometer, misalnya 0.1 km (100 meter)
+                                          double threshold =
+                                              0.1; // Nilai ambang batas dalam kilometer, misalnya 0.1 km (100 meter)
 
                                           // Menghitung jarak antara dua titik menggunakan Haversine formula untuk lokasi pertama
-                                          double distance1 = _calculateHaversineDistance(
+                                          double distance1 =
+                                              _calculateHaversineDistance(
                                             currentLocation!.latitude!,
                                             currentLocation.longitude!,
                                             centerLatitude1,
@@ -200,7 +237,8 @@ class _SimpanPageState extends State<SimpanPage> {
                                           );
 
                                           // Menghitung jarak antara dua titik menggunakan Haversine formula untuk lokasi kedua
-                                          double distance2 = _calculateHaversineDistance(
+                                          double distance2 =
+                                              _calculateHaversineDistance(
                                             currentLocation.latitude!,
                                             currentLocation.longitude!,
                                             centerLatitude2,
@@ -208,7 +246,8 @@ class _SimpanPageState extends State<SimpanPage> {
                                           );
 
                                           // Menghitung jarak antara dua titik menggunakan Haversine formula untuk lokasi kedua
-                                          double distance3 = _calculateHaversineDistance(
+                                          double distance3 =
+                                              _calculateHaversineDistance(
                                             currentLocation.latitude!,
                                             currentLocation.longitude!,
                                             centerLatitude3,
@@ -218,7 +257,8 @@ class _SimpanPageState extends State<SimpanPage> {
                                           print("Distance 1: $distance1");
                                           print("Distance 2: $distance2");
                                           print("Distance 3: $distance3");
-                                          print("Current Location: ${currentLocation?.latitude}, ${currentLocation?.longitude}");
+                                          print(
+                                              "Current Location: ${currentLocation?.latitude}, ${currentLocation?.longitude}");
 
                                           if (distance1 <= threshold) {
                                             return const Text(
@@ -268,11 +308,13 @@ class _SimpanPageState extends State<SimpanPage> {
                           const SizedBox(height: 20),
                           ElevatedButton(
                             onPressed: () {
-                              savePresensi(currentLocation.latitude, currentLocation.longitude);
+                              savePresensi(currentLocation.latitude,
+                                  currentLocation.longitude);
                             },
                             style: ElevatedButton.styleFrom(
                               minimumSize: const Size(340, 36),
-                              backgroundColor: const Color(0xFF1E232C), // Atur warna latar belakang tombol
+                              backgroundColor: const Color(
+                                  0xFF1E232C), // Atur warna latar belakang tombol
                             ),
                             child: const Text("Simpan Presensi"),
                           ),

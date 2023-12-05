@@ -24,7 +24,20 @@ class _AllRiwayatState extends State<AllRiwayat> {
   TextEditingController searchController = TextEditingController();
 
   DateTime parseTanggal(String tanggalString) {
-    final bulanList = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+    final bulanList = [
+      'Januari',
+      'Februari',
+      'Maret',
+      'April',
+      'Mei',
+      'Juni',
+      'Juli',
+      'Agustus',
+      'September',
+      'Oktober',
+      'November',
+      'Desember'
+    ];
 
     final parts = tanggalString.split(', ');
     if (parts.length == 2) {
@@ -58,7 +71,8 @@ class _AllRiwayatState extends State<AllRiwayat> {
     for (final presensi in riwayat) {
       final tanggalPresensi = parseTanggal(presensi.tanggal);
 
-      if (tanggalPresensi.month == bulanIni && tanggalPresensi.year == tahunIni) {
+      if (tanggalPresensi.month == bulanIni &&
+          tanggalPresensi.year == tahunIni) {
         jumlahPresensi++;
       }
     }
@@ -80,7 +94,9 @@ class _AllRiwayatState extends State<AllRiwayat> {
   }
 
   Future getData() async {
-    final Map<String, String> headers = {'Authorization': 'Bearer ' + await _token};
+    final Map<String, String> headers = {
+      'Authorization': 'Bearer ' + await _token
+    };
 
     // Mendapatkan data dari API
     final homeResponse = await myHttp.get(
@@ -96,8 +112,10 @@ class _AllRiwayatState extends State<AllRiwayat> {
     print("Response dari server (Home): " + homeResponse.body);
     print("Response dari server (Presensi): " + presensiResponse.body);
 
-    final homeResponseModel = HomeResponseModel.fromJson(json.decode(homeResponse.body));
-    final presensiResponseModel = PresensiResponModel.fromJson(json.decode(presensiResponse.body));
+    final homeResponseModel =
+        HomeResponseModel.fromJson(json.decode(homeResponse.body));
+    final presensiResponseModel =
+        PresensiResponModel.fromJson(json.decode(presensiResponse.body));
 
     setState(() {
       totalPresensi = presensiResponseModel.totalPresensi;
@@ -234,6 +252,128 @@ class _AllRiwayatState extends State<AllRiwayat> {
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: [
+                    Container(
+                      // Widget di atas AppBar, misalnya
+                      padding:
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                      color: Colors.grey[200],
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Rekap Presensi',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text('Popup Title'),
+                                    content: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Column(
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Text('Dari: '),
+                                                SizedBox(width: 10),
+                                                Expanded(
+                                                  child: TextFormField(
+                                                    readOnly: true,
+                                                    onTap: () async {
+                                                      DateTime? selectedDate =
+                                                          await showDatePicker(
+                                                        context: context,
+                                                        initialDate:
+                                                            DateTime.now(),
+                                                        firstDate: DateTime(
+                                                            DateTime.now()
+                                                                    .year -
+                                                                5),
+                                                        lastDate: DateTime(
+                                                            DateTime.now()
+                                                                    .year +
+                                                                5),
+                                                      );
+
+                                                      if (selectedDate !=
+                                                          null) {
+                                                        // Lakukan sesuatu dengan tanggal yang dipilih
+                                                        print(selectedDate);
+                                                      }
+                                                    },
+                                                    decoration: InputDecoration(
+                                                      border:
+                                                          OutlineInputBorder(),
+                                                      hintText: 'Pilih Tanggal',
+                                                    ),
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                            SizedBox(height: 20),
+                                            Row(
+                                              children: [
+                                                Text('Ke: '),
+                                                SizedBox(width: 18),
+                                                Expanded(
+                                                  child: TextFormField(
+                                                    readOnly: true,
+                                                    onTap: () async {
+                                                      DateTime? selectedDate =
+                                                          await showDatePicker(
+                                                        context: context,
+                                                        initialDate:
+                                                            DateTime.now(),
+                                                        firstDate: DateTime(
+                                                            DateTime.now()
+                                                                    .year -
+                                                                5),
+                                                        lastDate: DateTime(
+                                                            DateTime.now()
+                                                                    .year +
+                                                                5),
+                                                      );
+
+                                                      if (selectedDate !=
+                                                          null) {
+                                                        // Lakukan sesuatu dengan tanggal yang dipilih
+                                                        print(selectedDate);
+                                                      }
+                                                    },
+                                                    decoration: InputDecoration(
+                                                      border:
+                                                          OutlineInputBorder(),
+                                                      hintText: 'Pilih Tanggal',
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(height: 20),
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            // Tambahkan logika untuk menampilkan popup baru di sini
+                                          },
+                                          child: Text('Pilih'),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                            child: Icon(Icons
+                                .playlist_add_check), // Menggunakan ikon Rekap Presensi
+                          ),
+                        ],
+                      ),
+                    ),
                     const SizedBox(
                       height: 16,
                     ),
@@ -247,15 +387,19 @@ class _AllRiwayatState extends State<AllRiwayat> {
                               children: [
                                 Column(
                                   children: [
-                                    Text(riwayat[index].masuk ?? '-', style: const TextStyle(fontSize: 18)),
-                                    const Text("Masuk", style: TextStyle(fontSize: 14)),
+                                    Text(riwayat[index].masuk ?? '-',
+                                        style: const TextStyle(fontSize: 18)),
+                                    const Text("Masuk",
+                                        style: TextStyle(fontSize: 14)),
                                   ],
                                 ),
                                 const SizedBox(width: 20),
                                 Column(
                                   children: [
-                                    Text(riwayat[index].pulang ?? '-', style: const TextStyle(fontSize: 18)),
-                                    const Text("Pulang", style: TextStyle(fontSize: 14)),
+                                    Text(riwayat[index].pulang ?? '-',
+                                        style: const TextStyle(fontSize: 18)),
+                                    const Text("Pulang",
+                                        style: TextStyle(fontSize: 14)),
                                   ],
                                 ),
                               ],
@@ -327,14 +471,16 @@ class RiwayatSearch extends SearchDelegate<String> {
             children: [
               Column(
                 children: [
-                  Text(riwayat[index].masuk ?? '-', style: const TextStyle(fontSize: 18)),
+                  Text(riwayat[index].masuk ?? '-',
+                      style: const TextStyle(fontSize: 18)),
                   const Text("Masuk", style: TextStyle(fontSize: 14)),
                 ],
               ),
               const SizedBox(width: 20),
               Column(
                 children: [
-                  Text(riwayat[index].pulang ?? '-', style: const TextStyle(fontSize: 18)),
+                  Text(riwayat[index].pulang ?? '-',
+                      style: const TextStyle(fontSize: 18)),
                   const Text("Pulang", style: TextStyle(fontSize: 14)),
                 ],
               ),

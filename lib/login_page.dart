@@ -55,15 +55,16 @@ class _LoginPageState extends State<LoginPage> {
     } else {
       loginResponseModel = LoginResponseModel.fromJson(json.decode(response.body));
       print('HASIL ' + response.body);
-      saveUser(loginResponseModel.data.token, loginResponseModel.data.name);
+      saveUser(loginResponseModel.data.token, loginResponseModel.data.name, loginResponseModel.data.email);
     }
   }
 
-  Future saveUser(token, name) async {
+  Future saveUser(token, name, email) async {
     try {
       final SharedPreferences pref = await _prefs;
       pref.setString("name", name);
       pref.setString("token", token);
+      pref.setString("email", email);
       Navigator.of(context).push(MaterialPageRoute(builder: (context) => const MasterTabbar())).then((value) {
         setState(() {});
       });

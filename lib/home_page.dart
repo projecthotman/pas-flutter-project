@@ -573,23 +573,15 @@ class _HomePageState extends State<HomePage> {
                         itemBuilder: (context, index) => Card(
                           child: ListTile(
                             leading: Text(riwayat[index].tanggal),
-                            title: Row(
-                              children: [
-                                Column(
-                                  children: [
-                                    Text(riwayat[index].masuk ?? '-', style: const TextStyle(fontSize: 18)),
-                                    const Text("Masuk", style: TextStyle(fontSize: 14)),
-                                  ],
-                                ),
-                                const SizedBox(width: 20),
-                                Column(
-                                  children: [
-                                    Text(riwayat[index].pulang ?? '-', style: const TextStyle(fontSize: 18)),
-                                    const Text("Pulang", style: TextStyle(fontSize: 14)),
-                                  ],
-                                ),
-                              ],
-                            ),
+                            title: Row(children: [
+                              Column(
+                                children: [Text(riwayat[index].masuk, style: const TextStyle(fontSize: 18)), const Text("Masuk", style: TextStyle(fontSize: 14))],
+                              ),
+                              const SizedBox(width: 20),
+                              Column(
+                                children: [Text(riwayat[index].pulang ?? "--", style: const TextStyle(fontSize: 18)), const Text("Pulang", style: TextStyle(fontSize: 14))],
+                              ),
+                            ]),
                           ),
                         ),
                       ),

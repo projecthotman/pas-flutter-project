@@ -31,7 +31,7 @@ class Datum {
   String longitude;
   String tanggal;
   String masuk;
-  dynamic pulang;
+  String? pulang;
   DateTime createdAt;
   DateTime updatedAt;
   bool isHariIni;

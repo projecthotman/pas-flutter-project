@@ -9,7 +9,6 @@ import 'tabbar/master.dart';
 
 import 'dart:math' as math;
 
-
 import 'map.dart';
 
 class SimpanPage extends StatefulWidget {
@@ -24,12 +23,18 @@ class _SimpanPageState extends State<SimpanPage> {
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   late Future<String> _token;
 
+  late MapZoomPanBehavior _zoomPanBehavior;
+
   @override
   void initState() {
     super.initState();
     _token = _prefs.then((SharedPreferences prefs) {
       return prefs.getString("token") ?? "";
     });
+    _zoomPanBehavior = MapZoomPanBehavior(
+      enableDoubleTapZooming: true,
+      zoomLevel: 15, // Sesuaikan dengan level yang diinginkan
+    );
   }
 
   Future<LocationData?> _currenctLocation() async {
@@ -109,6 +114,10 @@ class _SimpanPageState extends State<SimpanPage> {
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
             if (snapshot.hasData) {
               final LocationData currentLocation = snapshot.data;
+              MapLatLng location = MapLatLng(
+                currentLocation.latitude!,
+                currentLocation.longitude!,
+              );
               // ignore: avoid_print
               print("Lokasi Anda : ${currentLocation.latitude} | ${currentLocation.longitude}");
               return SafeArea(
@@ -120,12 +129,20 @@ class _SimpanPageState extends State<SimpanPage> {
                         child: SfMaps(
                           layers: <MapLayer>[
                             MapTileLayer(
-                              initialFocalLatLng: MapLatLng(
-                                currentLocation.latitude!,
-                                currentLocation.longitude!,
-                              ),
-                              initialZoomLevel: 15,
-                              urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                              initialFocalLatLng: location,
+                              urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                              zoomPanBehavior: _zoomPanBehavior,
+                              markerBuilder: (BuildContext context, int index) {
+                                return MapMarker(
+                                  latitude: location.latitude,
+                                  longitude: location.longitude,
+                                  child: const Icon(
+                                    Icons.location_on,
+                                    color: Colors.red,
+                                    size: 100,
+                                  ),
+                                );
+                              },
                             ),
                           ],
                         )),
@@ -160,21 +177,50 @@ class _SimpanPageState extends State<SimpanPage> {
                                         if (snapshot.hasData) {
                                           final LocationData? currentLocation = snapshot.data;
 
-                                          double centerLatitude = -7.019950742580668;
-                                          double centerLongitude = 110.30832545032034;
+                                          // Koordinat 1 di wilayah SMK BN
+                                          double centerLatitude1 = -7.019950742580668;
+                                          double centerLongitude1 = 110.30832545032034;
 
-                                          // Jarak maksimal yang diterima sebagai bagian dari wilayah (misalnya 0.1 derajat)
-                                          double maxDistance = 0.3;
+                                          // Koordinat 2 di wilayah Asrama Putra BN
+                                          double centerLatitude2 = -7.019471;
+                                          double centerLongitude2 = 110.3112571;
 
-                                          // Menghitung jarak antara dua titik menggunakan Haversine formula
-                                          double distance = _calculateHaversineDistance(
+                                          // Koordinat 3 di wilayah Asrama Putri BN
+                                          double centerLatitude3 = -7.0195361;
+                                          double centerLongitude3 = 110.3084811;
+
+                                          double threshold = 0.1; // Nilai ambang batas dalam kilometer, misalnya 0.1 km (100 meter)
+
+                                          // Menghitung jarak antara dua titik menggunakan Haversine formula untuk lokasi pertama
+                                          double distance1 = _calculateHaversineDistance(
                                             currentLocation!.latitude!,
                                             currentLocation.longitude!,
-                                            centerLatitude,
-                                            centerLongitude,
+                                            centerLatitude1,
+                                            centerLongitude1,
                                           );
 
-                                          if (distance <= maxDistance) {
+                                          // Menghitung jarak antara dua titik menggunakan Haversine formula untuk lokasi kedua
+                                          double distance2 = _calculateHaversineDistance(
+                                            currentLocation.latitude!,
+                                            currentLocation.longitude!,
+                                            centerLatitude2,
+                                            centerLongitude2,
+                                          );
+
+                                          // Menghitung jarak antara dua titik menggunakan Haversine formula untuk lokasi kedua
+                                          double distance3 = _calculateHaversineDistance(
+                                            currentLocation.latitude!,
+                                            currentLocation.longitude!,
+                                            centerLatitude3,
+                                            centerLongitude3,
+                                          );
+
+                                          print("Distance 1: $distance1");
+                                          print("Distance 2: $distance2");
+                                          print("Distance 3: $distance3");
+                                          print("Current Location: ${currentLocation?.latitude}, ${currentLocation?.longitude}");
+
+                                          if (distance1 <= threshold) {
                                             return const Text(
                                               "SMK BAGIMU NEGERIKU",
                                               style: TextStyle(
@@ -182,9 +228,25 @@ class _SimpanPageState extends State<SimpanPage> {
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             );
+                                          } else if (distance2 <= threshold) {
+                                            return const Text(
+                                              "Aspa BN",
+                                              style: TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            );
+                                          } else if (distance3 <= threshold) {
+                                            return const Text(
+                                              "Aspi BN",
+                                              style: TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            );
                                           } else {
                                             return const Text(
-                                              "KAMU NANYAA.....",
+                                              "Bukan titik lokasi ",
                                               style: TextStyle(
                                                 fontSize: 18,
                                                 fontWeight: FontWeight.bold,

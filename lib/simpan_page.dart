@@ -9,7 +9,7 @@ import 'tabbar/master.dart';
 
 import 'dart:math' as math;
 
-import 'map.dart';
+// import 'map.dart';
 
 class SimpanPage extends StatefulWidget {
   // ignore: use_super_parameters
@@ -109,6 +109,10 @@ class _SimpanPageState extends State<SimpanPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Preseni Kehadiran'),
+      ),
+      drawer: buildDrawer(), // Tambahkan baris ini untuk menyertakan sidebar
       body: FutureBuilder<LocationData?>(
           future: _currenctLocation(),
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
@@ -215,10 +219,10 @@ class _SimpanPageState extends State<SimpanPage> {
                                             centerLongitude3,
                                           );
 
-                                          print("Distance 1: $distance1");
-                                          print("Distance 2: $distance2");
-                                          print("Distance 3: $distance3");
-                                          print("Current Location: ${currentLocation?.latitude}, ${currentLocation?.longitude}");
+                                          // print("Distance 1: $distance1");
+                                          // print("Distance 2: $distance2");
+                                          // print("Distance 3: $distance3");
+                                          // print("Current Location: ${currentLocation?.latitude}, ${currentLocation?.longitude}");
 
                                           if (distance1 <= threshold) {
                                             return const Text(
@@ -292,12 +296,71 @@ class _SimpanPageState extends State<SimpanPage> {
           }),
     );
   }
-}
 
-// void ToMap2(BuildContext context) {
-//   // Gunakan Navigator untuk berpindah ke halaman Map2
-//   Navigator.push(
-//     context,
-//     MaterialPageRoute(builder: (context) => Map2()),
-//   );
-// }
+  Widget buildDrawer() {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: <Widget>[
+          const DrawerHeader(
+            decoration: BoxDecoration(
+              color: Colors.blue,
+            ),
+            child: Text(
+              'Kehadiran Anda',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 24,
+              ),
+            ),
+          ),
+          ListTile(
+            title: Text('Presensi'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SimpanPage()),
+              );
+            },
+          ),
+          ListTile(
+            title: Text('Absensi'),
+            onTap: () {
+              showModalBottomSheet(
+                context: context,
+                builder: (BuildContext context) {
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      ListTile(
+                        title: Text('Sakit'),
+                        onTap: () {
+                          // TODO: Handle klik item "Sakit"
+                          Navigator.pop(context); // Tutup bottom sheet setelah item diklik
+                        },
+                      ),
+                      ListTile(
+                        title: Text('Cuti'),
+                        onTap: () {
+                          // TODO: Handle klik item "Cuti"
+                          Navigator.pop(context);
+                        },
+                      ),
+                      ListTile(
+                        title: Text('Ijin'),
+                        onTap: () {
+                          // TODO: Handle klik item "Ijin"
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}

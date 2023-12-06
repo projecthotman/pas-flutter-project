@@ -125,6 +125,7 @@ class _SimpanPageState extends State<SimpanPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Preseni Kehadiran'),
+        backgroundColor: const Color(0xFF688E4E),
       ),
       drawer: buildDrawer(), // Tambahkan baris ini untuk menyertakan sidebar
       body: FutureBuilder<LocationData?>(

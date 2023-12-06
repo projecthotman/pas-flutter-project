@@ -265,6 +265,10 @@ class _AllRiwayatState extends State<AllRiwayat> {
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                           ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              primary: Colors
+                                  .green, // Ubah warna latar belakang di sini
+                            ),
                             onPressed: () {
                               showDialog(
                                 context: context,
@@ -368,8 +372,9 @@ class _AllRiwayatState extends State<AllRiwayat> {
                                 },
                               );
                             },
-                            child: Icon(Icons
-                                .playlist_add_check), // Menggunakan ikon Rekap Presensi
+                            child: Icon(
+                              Icons.playlist_add_check,
+                            ), // Menggunakan ikon Rekap Presensi
                           ),
                         ],
                       ),

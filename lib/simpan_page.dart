@@ -8,6 +8,7 @@ import 'package:http/http.dart' as my_http;
 import 'tabbar/master.dart';
 
 import 'dart:math' as math;
+// import 'package:fluttertoast/fluttertoast.dart';
 
 // import 'map.dart';
 
@@ -22,7 +23,6 @@ class SimpanPage extends StatefulWidget {
 class _SimpanPageState extends State<SimpanPage> {
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   late Future<String> _token;
-
   late MapZoomPanBehavior _zoomPanBehavior;
 
   @override
@@ -75,11 +75,7 @@ class _SimpanPageState extends State<SimpanPage> {
     double dLat = _degreesToRadians(lat2 - lat1);
     double dLon = _degreesToRadians(lon2 - lon1);
 
-    double a = math.sin(dLat / 2) * math.sin(dLat / 2) +
-        math.cos(_degreesToRadians(lat1)) *
-            math.cos(_degreesToRadians(lat2)) *
-            math.sin(dLon / 2) *
-            math.sin(dLon / 2);
+    double a = math.sin(dLat / 2) * math.sin(dLat / 2) + math.cos(_degreesToRadians(lat1)) * math.cos(_degreesToRadians(lat2)) * math.sin(dLon / 2) * math.sin(dLon / 2);
 
     double c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a));
 
@@ -93,31 +89,136 @@ class _SimpanPageState extends State<SimpanPage> {
 
   Future savePresensi(latitude, longitude) async {
     SavePresensiResponseModel savePresensiResponseModel;
-    Map<String, String> body = {
-      "latitude": latitude.toString(),
-      "longitude": longitude.toString()
-    };
+    Map<String, String> body = {"latitude": latitude.toString(), "longitude": longitude.toString()};
     Map<String, String> headers = {'Authorization': 'Bearer ${await _token}'};
 
-    var response = await my_http.post(
-        Uri.parse("http://10.0.2.2:8000/api/save-presensi"),
-        body: body,
-        headers: headers);
+    var response = await my_http.post(Uri.parse("http://10.0.2.2:8000/api/save-presensi"), body: body, headers: headers);
     // print('Response from server: ${response.body}');
-    savePresensiResponseModel =
-        SavePresensiResponseModel.fromJson(json.decode(response.body));
+    savePresensiResponseModel = SavePresensiResponseModel.fromJson(json.decode(response.body));
     if (savePresensiResponseModel.success) {
       // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Sukses simpan Presensi')));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Sukses simpan Presensi')));
       // ignore: use_build_context_synchronously
-      Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (context) => const MasterTabbar()));
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MasterTabbar()));
     } else {
       // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Gagal simpan Presensi')));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Gagal simpan Presensi')));
     }
+  }
+
+  // void _showSuccessToast() {
+  //   Fluttertoast.showToast(
+  //     msg: 'Data berhasil disimpan',
+  //     toastLength: Toast.LENGTH_SHORT,
+  //     gravity: ToastGravity.BOTTOM,
+  //     timeInSecForIosWeb: 1,
+  //     backgroundColor: Colors.green,
+  //     textColor: Colors.white,
+  //     fontSize: 16.0,
+  //   );
+  // }
+
+  Future<void> sendAbsensiData(String keterangan) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String userEmail = await _getUserEmail(); // Gantilah dengan cara mendapatkan email user yang sedang login
+    String lastSentDateKey = 'lastSentDate_$userEmail';
+    String lastSentDate = prefs.getString(lastSentDateKey) ?? '';
+
+    DateTime currentDate = DateTime.now();
+    String formattedDate = '${currentDate.year}-${currentDate.month}-${currentDate.day}';
+
+    if (lastSentDate != formattedDate) {
+      Map<String, String> headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${await _token}',
+      };
+
+      final response = await my_http.post(
+        Uri.parse('http://10.0.2.2:8000/api/save-absensi'),
+        headers: headers,
+        body: jsonEncode({'keterangan': keterangan}),
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        final String successMessage = responseData['message'];
+        print(successMessage);
+
+        // Simpan tanggal terakhir pengiriman data berdasarkan email user
+        prefs.setString(lastSentDateKey, formattedDate);
+         showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Data berhasil di kirim'),
+              content: Text('Data absensi sudah di terima'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: ElevatedButton(
+                    onPressed: () {
+                      // Fungsi yang akan dijalankan ketika tombol ditekan
+                      Navigator.of(context).pop(); // Menutup dialog
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: const Color(0xFF688E4E), // Warna latar belakang tombol
+                    ),
+                    child: Text(
+                      'OK',
+                      style: TextStyle(color: Colors.white), // Warna teks tombol
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+        // Tampilkan toast berhasil
+        // _showSuccessToast();
+      } else {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        final String errorMessage = responseData['error'];
+        print('Gagal mengirim data. Pesan kesalahan: $errorMessage');
+      }
+    } else {
+      print('Data sudah dikirim pada tanggal yang sama.');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Peringatan !'),
+            content: Text('Anda sudah absensi pada hari ini '),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: ElevatedButton(
+                    onPressed: () {
+                      // Fungsi yang akan dijalankan ketika tombol ditekan
+                      Navigator.of(context).pop(); // Menutup dialog
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: const Color(0xFF688E4E), // Warna latar belakang tombol
+                    ),
+                    child: Text(
+                      'OK',
+                      style: TextStyle(color: Colors.white), // Warna teks tombol
+                    ),
+                  ),
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
+
+  Future<String> _getUserEmail() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('email') ?? '';
   }
 
   @override
@@ -138,13 +239,12 @@ class _SimpanPageState extends State<SimpanPage> {
               );
 
               MapMarker userMarker = MapMarker(
-            latitude: currentLocation.latitude!,
-            longitude: currentLocation.longitude!,
-            child: Icon(Icons.location_on, color: Colors.red), // Ikon tanda lokasi
-          );
+                latitude: currentLocation.latitude!,
+                longitude: currentLocation.longitude!,
+                child: Icon(Icons.location_on, color: Colors.red), // Ikon tanda lokasi
+              );
               // ignore: avoid_print
-              print(
-                  "Lokasi Anda : ${currentLocation.latitude} | ${currentLocation.longitude}");
+              print("Lokasi Anda : ${currentLocation.latitude} | ${currentLocation.longitude}");
               return SafeArea(
                   child: Column(
                 children: [
@@ -155,8 +255,7 @@ class _SimpanPageState extends State<SimpanPage> {
                         layers: <MapLayer>[
                           MapTileLayer(
                             initialFocalLatLng: location,
-                            urlTemplate:
-                                'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                             zoomPanBehavior: _zoomPanBehavior,
                             sublayers: [
                               MapCircleLayer(
@@ -167,11 +266,9 @@ class _SimpanPageState extends State<SimpanPage> {
                                       location.longitude,
                                     ),
                                     radius: 100, // Atur radius dalam meter
-                                    color: Colors.blue
-                                        .withOpacity(0.3), // Warna radius
+                                    color: Colors.blue.withOpacity(0.3), // Warna radius
                                     strokeWidth: 2, // Lebar garis radius
-                                    strokeColor:
-                                        Colors.blue, // Warna garis radius
+                                    strokeColor: Colors.blue, // Warna garis radius
                                   ),
                                 },
                               ),
@@ -207,18 +304,13 @@ class _SimpanPageState extends State<SimpanPage> {
                                   children: [
                                     FutureBuilder<LocationData?>(
                                       future: _currenctLocation(),
-                                      builder: (BuildContext context,
-                                          AsyncSnapshot<LocationData?>
-                                              snapshot) {
+                                      builder: (BuildContext context, AsyncSnapshot<LocationData?> snapshot) {
                                         if (snapshot.hasData) {
-                                          final LocationData? currentLocation =
-                                              snapshot.data;
+                                          final LocationData? currentLocation = snapshot.data;
 
                                           // Koordinat 1 di wilayah SMK BN
-                                          double centerLatitude1 =
-                                              -7.019950742580668;
-                                          double centerLongitude1 =
-                                              110.30832545032034;
+                                          double centerLatitude1 = -7.019950742580668;
+                                          double centerLongitude1 = 110.30832545032034;
 
                                           // Koordinat 2 di wilayah Asrama Putra BN
                                           double centerLatitude2 = -7.019471;
@@ -228,12 +320,10 @@ class _SimpanPageState extends State<SimpanPage> {
                                           double centerLatitude3 = -7.0195361;
                                           double centerLongitude3 = 110.3084811;
 
-                                          double threshold =
-                                              0.1; // Nilai ambang batas dalam kilometer, misalnya 0.1 km (100 meter)
+                                          double threshold = 0.1; // Nilai ambang batas dalam kilometer, misalnya 0.1 km (100 meter)
 
                                           // Menghitung jarak antara dua titik menggunakan Haversine formula untuk lokasi pertama
-                                          double distance1 =
-                                              _calculateHaversineDistance(
+                                          double distance1 = _calculateHaversineDistance(
                                             currentLocation!.latitude!,
                                             currentLocation.longitude!,
                                             centerLatitude1,
@@ -241,8 +331,7 @@ class _SimpanPageState extends State<SimpanPage> {
                                           );
 
                                           // Menghitung jarak antara dua titik menggunakan Haversine formula untuk lokasi kedua
-                                          double distance2 =
-                                              _calculateHaversineDistance(
+                                          double distance2 = _calculateHaversineDistance(
                                             currentLocation.latitude!,
                                             currentLocation.longitude!,
                                             centerLatitude2,
@@ -250,8 +339,7 @@ class _SimpanPageState extends State<SimpanPage> {
                                           );
 
                                           // Menghitung jarak antara dua titik menggunakan Haversine formula untuk lokasi kedua
-                                          double distance3 =
-                                              _calculateHaversineDistance(
+                                          double distance3 = _calculateHaversineDistance(
                                             currentLocation.latitude!,
                                             currentLocation.longitude!,
                                             centerLatitude3,
@@ -261,8 +349,7 @@ class _SimpanPageState extends State<SimpanPage> {
                                           print("Distance 1: $distance1");
                                           print("Distance 2: $distance2");
                                           print("Distance 3: $distance3");
-                                          print(
-                                              "Current Location: ${currentLocation?.latitude}, ${currentLocation?.longitude}");
+                                          print("Current Location: ${currentLocation?.latitude}, ${currentLocation?.longitude}");
 
                                           if (distance1 <= threshold) {
                                             return const Text(
@@ -312,13 +399,11 @@ class _SimpanPageState extends State<SimpanPage> {
                           const SizedBox(height: 20),
                           ElevatedButton(
                             onPressed: () {
-                              savePresensi(currentLocation.latitude,
-                                  currentLocation.longitude);
+                              savePresensi(currentLocation.latitude, currentLocation.longitude);
                             },
                             style: ElevatedButton.styleFrom(
                               minimumSize: const Size(340, 36),
-                              backgroundColor: const Color(
-                                  0xFF1E232C), // Atur warna latar belakang tombol
+                              backgroundColor: const Color(0xFF1E232C), // Atur warna latar belakang tombol
                             ),
                             child: const Text("Simpan Presensi"),
                           ),
@@ -359,10 +444,7 @@ class _SimpanPageState extends State<SimpanPage> {
           ListTile(
             title: Text('Presensi'),
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SimpanPage()),
-              );
+              Navigator.pop(context);
             },
           ),
           ListTile(
@@ -377,21 +459,21 @@ class _SimpanPageState extends State<SimpanPage> {
                       ListTile(
                         title: Text('Sakit'),
                         onTap: () {
-                          // TODO: Handle klik item "Sakit"
-                          Navigator.pop(context); // Tutup bottom sheet setelah item diklik
+                          sendAbsensiData('Sakit');
+                          Navigator.pop(context);
                         },
                       ),
                       ListTile(
                         title: Text('Cuti'),
                         onTap: () {
-                          // TODO: Handle klik item "Cuti"
+                          sendAbsensiData('Cuti');
                           Navigator.pop(context);
                         },
                       ),
                       ListTile(
                         title: Text('Ijin'),
                         onTap: () {
-                          // TODO: Handle klik item "Ijin"
+                          sendAbsensiData('Ijin');
                           Navigator.pop(context);
                         },
                       ),

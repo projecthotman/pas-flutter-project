@@ -37,6 +37,24 @@ class _SimpanPageState extends State<SimpanPage> {
     );
   }
 
+void didChangeDependencies() {
+  super.didChangeDependencies();
+  _refreshPage(); // Panggil method refresh saat dependensi berubah
+}
+
+void _refreshPage() {
+  setState(() {
+    // Taruh logika refresh halaman di sini
+    // Misalnya, panggil method atau perbarui data yang perlu diperbarui
+    // Contoh:
+    _token = _prefs.then((SharedPreferences prefs) {
+      return prefs.getString("token") ?? "";
+    });
+    // ... (Tambahkan logika lainnya yang perlu direfresh)
+  });
+}
+
+
   Future<LocationData?> _currenctLocation() async {
     bool serviceEnable;
     PermissionStatus permissionGranted;
